@@ -70,8 +70,8 @@ class SendEmailConfirmationService {
             port: 587,
             secure: false, // true for 465, false for other ports
             auth: {
-                user: 'atendimento@magicti.com', // generated ethereal user
-                pass: 'A+T!33#UySc' // generated ethereal password
+                user: process.env.USER_SEND_EMAIL!,
+                pass: process.env.PASSWORD_SEND_EMAIL!
             },
         });
 

@@ -90,6 +90,7 @@ class AuthUserService {
                 name: updatedUser.name,
                 login: updatedUser.login,
                 email: updatedUser.email,
+                cargo: updatedUser.cargo,
                 admin: updatedUser.admin,
                 avatar: updatedUser.avatar,
                 empresa: {
