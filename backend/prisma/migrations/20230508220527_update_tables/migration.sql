@@ -1,0 +1,25 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+-- AlterTable
+ALTER TABLE [dbo].[t_empresa] ALTER COLUMN [dt_atualizado] DATETIME2 NULL;
+
+-- AlterTable
+ALTER TABLE [dbo].[t_modelo_doc] ALTER COLUMN [dt_atualizado] DATETIME2 NULL;
+
+-- AlterTable
+ALTER TABLE [dbo].[t_user] ALTER COLUMN [updatedAt] DATETIME2 NULL;
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH

@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  name       String?
+  login      String    @unique
+  password   String
+  admin      Boolean   @default(false)
+  avatar     String?
+  id_empresa Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime?
+  lastLogin  DateTime?
+  cargo      String?
+  ativo      Boolean   @default(true)
+
+  empresa Empresa @relation(fields: [id_empresa], references: [id_empresa])
+
+  log          Log[]
+  documentType DocumentType[]
+
+  @@map("t_user")
+}
+
+model Empresa {
+  id_empresa    Int       @id @default(autoincrement())
+  nome          String    @unique
+  endereco      String
+  cnpj          String    @unique
+  email         String    @unique
+  telefone      String?
+  ativo         Boolean   @default(false)
+  dt_criado     DateTime  @default(now())
+  dt_atualizado DateTime?
+
+  users        User[]
+  log          Log[]
+  documentType DocumentType[]
+
+  @@map("t_empresa")
+}
+
+model DocumentType {
+  id_doc_type     Int       @id @default(autoincrement())
+  descricao       String
+  number_document String
+  type            String
+  file            String
+  id_empresa      Int?
+  id_user         Int?
+  dt_criado       DateTime  @default(now())
+  dt_atualizado   DateTime?
+
+  empresa Empresa? @relation(fields: [id_empresa], references: [id_empresa], onDelete: NoAction, onUpdate: NoAction)
+  user    User?    @relation(fields: [id_user], references: [id])
+
+  @@map("t_modelo_doc")
+}
+
+model Log {
+  id_log     Int      @id @default(autoincrement())
+  id_user    Int?
+  id_empresa Int?
+  descricao  String
+  dt_criado  DateTime @default(now())
+
+  empresa Empresa? @relation(fields: [id_empresa], references: [id_empresa], onDelete: NoAction, onUpdate: NoAction)
+  user    User?    @relation(fields: [id_user], references: [id])
+
+  @@map("t_log")
+}
