@@ -1,21 +1,42 @@
-import React, { useState } from 'react';
-import { Card, CardBody, Col, Form, Input, Label, Row, FormFeedback, Button, FormGroup } from 'reactstrap';
+import React, { useEffect, useState } from 'react';
+import { Card, CardBody, Col, Form, Input, Label, Row, FormFeedback, Button, FormGroup, Spinner } from 'reactstrap';
+import { useRegister } from '../../../../../../context/RegisterContext/useRegister';
 
 const FormCreateProfile = () => {
   const [nameError, setNameError] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [selectedSubroles, setSelectedSubroles] = useState([]);
 
+  const { listRoles, createProfile, loading } = useRegister();
+
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      const response = await listRoles();
+      setRoles(response);
+    };
+
+    fetchRoles();
+  }, []);
+
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = new FormData(event.target);
-    const values = Object.fromEntries(form.entries());
+    const value = Object.fromEntries(form.entries());
 
     // Include the selected roles in the values object
-    values.roles = selectedSubroles;
+    value.roles = selectedSubroles.map((subrole) => subrole.id);
 
-    console.log(values);
-    // createProfile(values);
+    const data = {
+      nome_perfil: value.nome_perfil,
+      descricao_perfil: value.descricao_perfil,
+      roles: value.roles,
+    };
+
+    //console.log(data);
+    createProfile(data);
   };
 
   const handleNameBlur = (event) => {
@@ -28,86 +49,22 @@ const FormCreateProfile = () => {
     }
   };
 
-  // Create a list of roles with subroles to be selected by the user in the form of checkboxes
-  const roles = [
-    {
-      id: 1,
-      name: 'Cadastro',
-      subroles: [
-        {
-          id: 10,
-          name: 'Perfil de Usuário',
-          
-         
-        },
-        {
-          id: 20,
-          name: 'Usuário',
-        },
-        {
-          id: 30,
-          name: 'Empresa',
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Financeiro',
-      subroles: [
-        {
-          id: 11,
-          name: 'Contas a Pagar',
-        },
-        {
-          id: 21,
-          name: 'Contas a Receber',
-        },
-        {
-          id: 31,
-          name: 'Fluxo de Caixa',
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Administrativo',
-      subroles: [
-        {
-          id: 11,
-          name: 'Modelo de Documentos',
-        },
-        {
-          id: 21,
-          name: 'Agenda',
-        },
-        {
-          id: 31,
-          name: 'Relatorios',
-        },
-        {
-          id: 32,
-          name: 'Documentos Oficiais',
-        }
-      ],
-    },
-  ];
-
   const handleRoleChange = (event) => {
     const { name, checked } = event.target;
-  
+
     if (checked) {
       const role = roles.find((role) => role.name === name);
-  
+
       if (role) {
         const subroleNames = role.subroles.map((subrole) => subrole.name);
         setSelectedRoles((prevRoles) => [...prevRoles, ...subroleNames]);
         setSelectedSubroles((prevSubroles) => [...prevSubroles, ...role.subroles]);
       }
-  
+
       setSelectedRoles((prevRoles) => [...prevRoles, name]);
     } else {
       const role = roles.find((role) => role.name === name);
-  
+
       if (role) {
         const subroleNames = role.subroles.map((subrole) => subrole.name);
         setSelectedRoles((prevRoles) =>
@@ -117,7 +74,7 @@ const FormCreateProfile = () => {
           prevSubroles.filter((subrole) => !subroleNames.includes(subrole.name))
         );
       }
-  
+
       setSelectedRoles((prevRoles) => prevRoles.filter((role) => role !== name));
       setSelectedSubroles((prevSubroles) =>
         prevSubroles.filter((subrole) => subrole.name !== name)
@@ -129,7 +86,7 @@ const FormCreateProfile = () => {
     if (!selectedRoles.includes(role.name)) {
       return null;
     }
-  
+
     return role.subroles.map((subrole) => (
       <FormGroup check key={subrole.id}>
         <Label check style={{ marginLeft: '1rem' }}>
@@ -148,6 +105,10 @@ const FormCreateProfile = () => {
   return (
     <Card className="main-card mb-3">
       <CardBody>
+        {loading &&
+          <div className="text-center"><Spinner color="primary" /></div>}
+
+
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col md={5}>
@@ -204,6 +165,7 @@ const FormCreateProfile = () => {
             ))}
           </Col>
         </Row>
+
 
       </CardBody>
     </Card>

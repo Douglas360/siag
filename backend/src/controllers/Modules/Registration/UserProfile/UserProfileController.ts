@@ -3,7 +3,7 @@ import { UserProfileService } from "../../../../services/Modules/Registration/Us
 
 class UserProfileController {
     async create(request: Request, response: Response) {
-        const { nome_perfil, roles } = request.body;
+        const { nome_perfil, descricao_perfil, roles } = request.body;
 
 
 
@@ -11,6 +11,7 @@ class UserProfileController {
 
         const userProfile = await userProfileService.create({
             nome_perfil,
+            descricao_perfil,
             id_permissao: roles,
         });
 

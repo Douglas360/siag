@@ -6,6 +6,7 @@ export const RegisterContext = createContext();
 
 export const RegisterProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
+
     const ERROR_MESSAGES = {
         'A company with this CNPJ and email already exists': 'Empresa com este CNPJ e email já existe',
         'Descrição é obrigatório': 'Descrição é obrigatório',
@@ -13,6 +14,8 @@ export const RegisterProvider = ({ children }) => {
         'User is not active': 'Usuário não está ativo',
         'Document type already exists': 'Número de documento já existe, favor verificar',
         'Email is required': 'Email é obrigatório',
+        'User profile already exists': 'Perfil de usuário já existe',
+        'Profile name is required': 'Nome do perfil é obrigatório',
     };
 
     //function to update company data
@@ -39,8 +42,53 @@ export const RegisterProvider = ({ children }) => {
         }
     };
 
+    //function to list roles
+    const listRoles = async () => {
+        try {
+            setLoading(true);
+            const response = await api.get('/list/permissions');
+            setLoading(false);
+            return response.data;
+        } catch (error) {
+            setLoading(false);
+            console.log(error)
+            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
+            return error
+        }
+    };
+
+    //function to create User Profile
+
+    const createProfile = async (data) => {
+        try {
+            setLoading(true);
+            const response = await api.post('/create/user/profile', data);
+            toast.success('Perfil criado com sucesso!', {
+                autoClose: 1000,
+            });
+            setLoading(false);
+            return response.data;
+        } catch (error) {
+            setLoading(false);
+            console.log(error)
+            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
+            return error
+        }
+    };
+
+
+
+
     return (
-        <RegisterContext.Provider value={{ updateCompany, loading }}>
+        <RegisterContext.Provider value={{ loading, updateCompany, listRoles, createProfile }}>
             {children}
         </RegisterContext.Provider>
 

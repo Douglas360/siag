@@ -84,6 +84,7 @@ model Log {
 model UserProfile {
   id_perfil   Int    @id @default(autoincrement())
   nome_perfil String
+  descricao_perfil   String?
 
   profilePermission ProfilePermission[]
   userMapping       UserProfileMapping[]

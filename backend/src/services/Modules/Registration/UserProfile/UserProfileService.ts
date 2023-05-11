@@ -3,12 +3,25 @@ import prismaClient from "../../../../prisma";
 
 interface IUserProfileRequest {
     nome_perfil?: string;
+    descricao_perfil?: string;
     id_permissao?: number[]
+
+}
+
+interface Role {
+    id: number;
+    name: string;
+    subroles: Subrole[];
+}
+
+interface Subrole {
+    id: number;
+    name: string;
 }
 
 class UserProfileService {
     //CREATE USER PROFILE
-    async create({ nome_perfil, id_permissao }: IUserProfileRequest) {
+    async create({ nome_perfil, descricao_perfil, id_permissao }: IUserProfileRequest) {
         try {
             // Validate user input
             if (!nome_perfil) {
@@ -29,6 +42,7 @@ class UserProfileService {
             const userProfile = await prismaClient.userProfile.create({
                 data: {
                     nome_perfil,
+                    descricao_perfil,
 
                 },
             });
@@ -64,16 +78,32 @@ class UserProfileService {
                 },
             });
 
-            const formattedPermissions = permissions.map((permission) => ({
-                id: permission.modulo?.id_modulo,
-                name: permission.modulo?.nome_modulo,
-                subroles: [
-                    {
+            const formattedPermissions = permissions.reduce((acc: Role[], permission) => {
+                const existingRole = acc.find((role) => role.id === permission.modulo?.id_modulo);
+
+                if (existingRole) {
+                    existingRole.subroles.push({
                         id: permission.id_permissao,
                         name: permission.nome_permissao,
-                    }
-                ],
-            }));
+                    });
+                } else {
+                    const newRole: Role = {
+                        id: permission.modulo?.id_modulo || 0,
+                        name: permission.modulo?.nome_modulo || '',
+                        subroles: [
+                            {
+                                id: permission.id_permissao || 0,
+                                name: permission.nome_permissao || '',
+                            },
+                        ],
+                    };
+
+                    acc.push(newRole);
+                }
+
+                return acc;
+            }, []);
+
 
             return formattedPermissions;
         }
