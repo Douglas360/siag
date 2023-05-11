@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardBody, Col, Form, Input, Label, Row, FormFeedback, Button, FormGroup, Spinner } from 'reactstrap';
+import { Card, CardBody, Col, Form, Input, Label, Row, FormFeedback, Button, FormGroup, Spinner, ListGroupItem } from 'reactstrap';
 import { useRegister } from '../../../../../../context/RegisterContext/useRegister';
 
 const FormCreateProfile = () => {
   const [nameError, setNameError] = useState(false);
+  const [checked, setChecked] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [selectedSubroles, setSelectedSubroles] = useState([]);
 
@@ -28,6 +29,15 @@ const FormCreateProfile = () => {
 
     // Include the selected roles in the values object
     value.roles = selectedSubroles.map((subrole) => subrole.id);
+
+    //Valide if the role is empty or not 
+    if (value.roles.length === 0) {
+      setChecked(true);
+      return;    
+    }
+
+
+
 
     const data = {
       nome_perfil: value.nome_perfil,
@@ -145,7 +155,9 @@ const FormCreateProfile = () => {
         {/* Select roles */}
         <Row className="mt-4">
           <Col md={12}>
-            <Label>Selecione as permissões</Label>
+            <Label>{
+              checked ?<ListGroupItem color="danger">Selecione pelo menos uma Permissão</ListGroupItem> : 'Selecione as Permissões'
+              }</Label>
 
             {roles.map((role) => (
               <FormGroup key={role.id}>

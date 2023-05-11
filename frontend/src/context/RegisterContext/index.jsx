@@ -16,6 +16,9 @@ export const RegisterProvider = ({ children }) => {
         'Email is required': 'Email é obrigatório',
         'User profile already exists': 'Perfil de usuário já existe',
         'Profile name is required': 'Nome do perfil é obrigatório',
+        'User profile does not exists': 'Perfil de usuário não existe',
+        'User profile is being used by a user': 'Perfil de usuário em uso no sistema',
+
     };
 
     //function to update company data
@@ -62,7 +65,6 @@ export const RegisterProvider = ({ children }) => {
     };
 
     //function to create User Profile
-
     const createProfile = async (data) => {
         try {
             setLoading(true);
@@ -84,11 +86,51 @@ export const RegisterProvider = ({ children }) => {
         }
     };
 
+    //function to list User Profile
+    const listProfile = async () => {
+        try {
+            setLoading(true);
+            const response = await api.get('/list/user/profile');
+            setLoading(false);
+            return response.data;
+        } catch (error) {
+            setLoading(false);
+            console.log(error)
+            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
+            return error
+        }
+    };
+
+    //function to delete User Profile by id in params
+    const deleteProfile = async (id) => {
+        try {
+            setLoading(true);
+            const response = await api.delete(`/delete/user/profile/${id}`);
+            toast.success('Perfil deletado com sucesso!', {
+                autoClose: 1000,
+            });
+            setLoading(false);
+            return response.data;
+        } catch (error) {
+            setLoading(false);
+            console.log(error)
+            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+              
+            });
+            return error
+        }
+    };
+
 
 
 
     return (
-        <RegisterContext.Provider value={{ loading, updateCompany, listRoles, createProfile }}>
+        <RegisterContext.Provider value={{ loading, updateCompany, listRoles, createProfile, listProfile, deleteProfile }}>
             {children}
         </RegisterContext.Provider>
 

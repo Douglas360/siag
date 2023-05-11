@@ -33,6 +33,9 @@ router.delete('/delete/document/type/:id', new DocumentTypeController().delete);
 //Routes Registration/UserProfile
 router.post('/create/user/profile', new UserProfileController().create);
 router.get('/list/permissions', new UserProfileController().listPermissions);
+router.get('/list/user/profile', new UserProfileController().list);
+router.put('/update/user/profile/:id', new UserProfileController().update);
+router.delete('/delete/user/profile/:id', new UserProfileController().delete);
 
 
 export { router };
