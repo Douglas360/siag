@@ -25,10 +25,10 @@ model User {
   cargo      String?
   ativo      Boolean   @default(true)
 
-  empresa Empresa @relation(fields: [id_empresa], references: [id_empresa])
-
   log          Log[]
   documentType DocumentType[]
+  userMapping  UserProfileMapping[]
+  empresa      Empresa              @relation(fields: [id_empresa], references: [id_empresa])
 
   @@map("t_user")
 }
@@ -79,4 +79,57 @@ model Log {
   user    User?    @relation(fields: [id_user], references: [id])
 
   @@map("t_log")
+}
+
+model UserProfile {
+  id_perfil   Int    @id @default(autoincrement())
+  nome_perfil String
+
+  profilePermission ProfilePermission[]
+  userMapping       UserProfileMapping[]
+
+  @@map("t_perfil_usuario")
+}
+
+model Module {
+  id_modulo   Int    @id @default(autoincrement())
+  nome_modulo String
+
+  permissao Permission[]
+
+  @@map("t_modulo")
+}
+
+model Permission {
+  id_permissao   Int    @id @default(autoincrement())
+  nome_permissao String
+  id_modulo      Int?
+
+  profilePermission ProfilePermission[]
+  modulo            Module?             @relation(fields: [id_modulo], references: [id_modulo], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("t_permissao")
+}
+
+model ProfilePermission {
+  id_perfil_permissao Int     @id @default(autoincrement())
+  id_perfil           Int
+  id_permissao        Int
+  canEdit             Boolean @default(true) // Indica se o perfil pode editar a permissão
+
+  profile    UserProfile @relation(fields: [id_perfil], references: [id_perfil])
+  permission Permission  @relation(fields: [id_permissao], references: [id_permissao])
+
+  @@map("t_perfil_acesso_permissao")
+}
+
+model UserProfileMapping {
+  id_usuario_perfil Int @id @default(autoincrement())
+  id_perfil         Int
+  id_usuario        Int
+
+  user    User        @relation(fields: [id_usuario], references: [id])
+  profile UserProfile @relation(fields: [id_perfil], references: [id_perfil])
+
+  @@map("t_usuario_perfil")
 }
