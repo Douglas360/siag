@@ -46,10 +46,10 @@ export const AppRouter = () => {
         return isAuthenticated ? children : <Login />
     }
 
-    const Authenticated = ({ children }) => {
-        const token = localStorage.getItem('token');
+   /* const Authenticated = ({ children }) => {
+        const token = localStorage.getItem('token') || null;
         return token ? <Navigate to="/dashboards/basic" /> : children
-    }
+    }*/
 
 
 
@@ -60,7 +60,7 @@ export const AppRouter = () => {
             <CombinedProvider>
                     <Suspense fallback={<AppLoader />}>
                         <Routes>
-                            <Route path="/" exact element={<Authenticated><Login /></Authenticated>} />
+                            <Route path="/" exact element={<Login />} />
 
                             <Route path="/dashboards/basic" element={<Private><Dashboards/></Private>} />
                             <Route path="administrative/*" element={<Administrative />} />

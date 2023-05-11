@@ -9,9 +9,6 @@ import { useAdministrative } from '../../../../../context/AdministrativeContext/
 import { useAuth } from '../../../../../context/AuthContext/useAuth';
 
 
-
-
-
 const FormRegister = () => {
     const { createDocumentType, loading } = useAdministrative();
     const { user } = useAuth()

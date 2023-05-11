@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./styles.css";
 import 'react-toastify/dist/ReactToastify.css';
 
-import { Button, CardTitle, Spinner } from "reactstrap";
+import { Button, CardTitle, Form, Input, Label, Spinner } from "reactstrap";
 import { useAuth } from "../../context/AuthContext/useAuth";
 
 const Login = () => {
@@ -12,7 +12,7 @@ const Login = () => {
 
     const { signIn, loading } = useAuth()
 
-    function handleSubmit(event) {
+    const handleSubmit = (event) => {
         event.preventDefault();
         // Validate the login credentials and send a request to the server
         const data = {
@@ -21,30 +21,29 @@ const Login = () => {
             rememberMe
         }
 
-
         signIn(data)
     }
 
-
     return (
+
         <div className="login-container">
+
             {loading && <Spinner color="primary" />}
             <CardTitle className="mb-1.5">Login</CardTitle>
-            <form onSubmit={handleSubmit}
+            <Form onSubmit={handleSubmit}
             >
                 <CardTitle>Usuário</CardTitle>
 
-                <input
+                <Input
                     type="text"
                     id="username"
                     name="username"
                     value={login}
                     onChange={(event) => setLogin(event.target.value)}
                     required
-
                 />
                 <CardTitle>Senha</CardTitle>
-                <input
+                <Input
                     type="password"
                     id="password"
                     name="password"
@@ -52,8 +51,8 @@ const Login = () => {
                     onChange={(event) => setPassword(event.target.value)}
                     required
                 />
-                <label htmlFor="remember-me">
-                    <input
+                <Label htmlFor="remember-me">
+                    <Input
                         type="checkbox"
                         id="remember-me"
                         name="remember-me"
@@ -61,9 +60,9 @@ const Login = () => {
                         onChange={(event) => setRememberMe(event.target.checked)}
                     />
                     Lembrar-me
-                </label>
+                </Label>
                 <Button type="submit" outline color="info">Entrar</Button>
-            </form>
+            </Form>
             <p>
                 Não tem uma conta? <a href="/signup">Cadastrar</a>
             </p>

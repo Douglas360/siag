@@ -72,7 +72,7 @@ const UserBox = () => {
               </UncontrolledButtonDropdown>
             </div>
             <div className="widget-content-left  ms-3 header-user-info">
-              <div className="widget-heading">{user.name}</div>
+              <div className="widget-heading">{user.name }</div>
               <div className="widget-subheading">{user.cargo}</div>
             </div>
 

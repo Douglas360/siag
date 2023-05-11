@@ -6,9 +6,9 @@ import AppHeader from '../../Layout/AppHeader';
 import AppSidebar from '../../Layout/AppSidebar';
 
 
-
 //Pages
 const Company = lazy(() => import('./Company'));
+const UserProfile = lazy(() => import('./User/CreateProfile'));
 
 
 const Registration = () => (
@@ -23,6 +23,7 @@ const Registration = () => (
                     <Routes>
                         <Route path="/" element={<Company />} />
                         <Route path="company" element={<Company />} />
+                        <Route path="profile" element={<UserProfile />} />
 
                     </Routes>
 
