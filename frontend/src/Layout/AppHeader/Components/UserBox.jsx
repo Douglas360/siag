@@ -15,9 +15,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'react-toastify/dist/ReactToastify.css';
 import avatar1 from '../../../assets/utils/images/avatars/3.jpg';
 import { useAuth } from '../../../context/AuthContext/useAuth';
+import { Divider } from '@mui/material';
 
 const UserBox = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
 
   const notify2 = () =>
     toast("You don't have any new items in your calendar for today! Go out and play!", {
@@ -67,12 +68,20 @@ const UserBox = () => {
                     <NavItem>
                       <NavLink href="#">Logs</NavLink>
                     </NavItem>
+                    <Divider />
+                  
+                    <NavItem>
+                      <NavLink href="#" onClick={signOut}>
+                        Sair                                                          
+                      </NavLink>
+                    </NavItem>
+
                   </Nav>
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
             </div>
             <div className="widget-content-left  ms-3 header-user-info">
-              <div className="widget-heading">{user.name }</div>
+              <div className="widget-heading">{user.name}</div>
               <div className="widget-subheading">{user.cargo}</div>
             </div>
 

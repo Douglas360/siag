@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { api } from '../../services/api';
 import { toast } from 'react-toastify';
 
@@ -6,6 +6,14 @@ export const RegisterContext = createContext();
 
 export const RegisterProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
+    const [roles, setRoles] = useState([]);
+    const [loadingRoles, setLoadingRoles] = useState(false);
+
+    //useEffect to list roles when the page is loaded 
+    useEffect(() => {
+        listRoles();
+    }, []);
+
 
     const ERROR_MESSAGES = {
         'A company with this CNPJ and email already exists': 'Empresa com este CNPJ e email já existe',
@@ -50,6 +58,7 @@ export const RegisterProvider = ({ children }) => {
         try {
             setLoading(true);
             const response = await api.get('/list/permissions');
+            setRoles(response.data)
             setLoading(false);
             return response.data;
         } catch (error) {
@@ -92,6 +101,7 @@ export const RegisterProvider = ({ children }) => {
             setLoading(true);
             const response = await api.get('/list/user/profile');
             setLoading(false);
+
             return response.data;
         } catch (error) {
             setLoading(false);
@@ -104,6 +114,51 @@ export const RegisterProvider = ({ children }) => {
             return error
         }
     };
+
+    //function to update User Profile by id in params
+    const updateProfile = async (data) => {
+        try {
+
+            setLoadingRoles(true);
+            const response = await api.put(`/update/user/profile/${data.id}`, data);
+            toast.success('Perfil atualizado com sucesso!', {
+                autoClose: 1000,
+            });
+            setLoadingRoles(false);
+            return response.data;
+
+        } catch (error) {
+            setLoadingRoles(false);
+            console.log(error)
+            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
+            return error
+
+        }
+    };
+
+    //function to list User Profile by id in params
+    const listProfileById = async (id) => {
+        try {
+            setLoading(true);
+            const response = await api.get(`/list/user/profile/${id}`);
+            setLoading(false);
+            return response.data;
+        } catch (error) {
+            setLoading(false);
+            console.log(error)
+            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
+            return error
+        }
+    };
+
 
     //function to delete User Profile by id in params
     const deleteProfile = async (id) => {
@@ -120,7 +175,7 @@ export const RegisterProvider = ({ children }) => {
             console.log(error)
             const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
             toast.error(message, {
-              
+
             });
             return error
         }
@@ -130,7 +185,7 @@ export const RegisterProvider = ({ children }) => {
 
 
     return (
-        <RegisterContext.Provider value={{ loading, updateCompany, listRoles, createProfile, listProfile, deleteProfile }}>
+        <RegisterContext.Provider value={{ loading, loadingRoles, updateCompany, roles, createProfile, listProfile, deleteProfile, updateProfile, listProfileById }}>
             {children}
         </RegisterContext.Provider>
 

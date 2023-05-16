@@ -2,7 +2,39 @@ export const MainNav = [
     {
         icon: 'pe-7s-keypad',
         label: 'Dashboard',
+
+
         to: '/dashboards/basic',
+
+    },
+];
+
+export const RegistrationNav = [
+    {
+        icon: 'pe-7s-note2',
+        label: 'Cadastros',
+        content: [
+            {
+                label: 'Perfil de Usuário',
+                to: '/create/profile',
+            },
+            {
+                label: 'Usuário',
+                to: '/create/user',
+            },
+            {
+                label: 'Empresa',
+
+                to: '/create/company',
+            },
+            {
+                label: 'Prestadores de Serviços',
+                to: '/charts/chartjs',
+            },
+
+        ],
+
+
     },
 ];
 export const ComponentsNav = [
@@ -75,7 +107,7 @@ export const AdministrativeNav = [
                 to: '/elements/badges-labels',
             },
             {
-                label: 'Documentos Oficiais',
+                label: 'Documentos oficiais',
                 to: '/elements/cards',
             },
             {
@@ -102,7 +134,7 @@ export const PedagogicalNav = [
         content: [
             {
                 icon: 'pe-7s-light',
-                label: 'Modelo de documentos',
+                label: 'Modelo de documento',
                 to: '/forms/controls',
             },
             {
@@ -166,7 +198,12 @@ export const PatrimonialNav = [
     {
         icon: 'lnr-apartment',
         label: 'Patrimonio',
-        to: '/charts/chartjs',
+        content: [
+            {
+                label: 'Tabs',
+                to: '/charts/chartjs',
+            },
+        ]
 
     },
 
@@ -175,69 +212,58 @@ export const ConstructionNav = [
     {
         icon: 'lnr-construction',
         label: 'Serviços | Obras',
-        to: '/tables/regular-tables',
+        content: [
+            {
+                label: 'Tabs',
+                to: '/tables/regular-tables',
+            }
+        ],
     },
 ];
 export const ServiceNav = [
     {
         icon: 'pe-7s-help2',
         label: 'Atendimento',
+        content: [
+            {
+                icon: 'pe-7s-study',
+                label: 'Documentação Escolar',
+
+            },
+            {
+                icon: 'pe-7s-pendrive',
+                label: 'Alimentação Escolar',
+
+            },
+        ]
 
     },
-    {
-        icon: 'pe-7s-study',
-        label: 'Documentação Escolar',
 
-    },
-    {
-        icon: 'pe-7s-pendrive',
-        label: 'Alimentação Escolar',
-
-    },
 ];
 export const LogisticsNav = [
     {
         icon: 'pe-7s-graph2',
         label: 'Logística & Suprimentos',
-        to: '/widgets/dashboard-boxes',
+        content: [
+            { to: '/widgets/dashboard-boxes', }
+        ],
+
+
     },
 ];
 export const ChartsNav = [
     {
         icon: 'pe-7s-graph2',
         label: 'Contabilidade e Finanças',
-        to: '/charts/chartjs',
-    },
-];
-
-export const RegistrationNav = [
-    {
-        icon: 'pe-7s-note2',
-        label: 'Cadastros',
         content: [
             {
-                label: 'Perfil de Usuário',
-                to: '/create/profile',
-            },
-            {
-                label: 'Usuários',
-                to: '/create/user',
-            },
-            {
-                label: 'Empresa',
-
-                to: '/create/company',
-            },
-            {
-                label: 'Prestadores de Serviços',
                 to: '/charts/chartjs',
-            },
-
+            }
         ],
-
-
     },
 ];
+
+
 
 export const SettingsNav = [
     {

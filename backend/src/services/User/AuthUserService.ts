@@ -84,6 +84,66 @@ class AuthUserService {
                 }
             });
 
+            const userProfileMappings = await prisma.userProfileMapping.findMany({
+                where: {
+                    id_usuario: updatedUser.id,
+                },
+                select: {
+                    profile: {
+                        select: {
+                            id_perfil: true,
+                        }
+
+                    },
+                },
+            });
+
+            const profileIds = userProfileMappings.map((mapping) => mapping.profile.id_perfil);
+
+            const profile_permissions = await prisma.profilePermission.findMany({
+                where: {
+                    id_perfil: {
+                        in: profileIds,
+                    },
+                },
+                select: {
+                    permission: {
+                        include: {
+                            modulo: {
+                                select: {
+                                    id_modulo: true,
+                                    nome_modulo: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+
+            const permissions = profile_permissions.reduce((acc, { permission }) => {
+                const modulo = permission.modulo;
+
+                // Find the existing entry for the modulo or create a new one
+                let moduloEntry = acc.find((entry) => entry.id === modulo?.id_modulo);
+                if (!moduloEntry) {
+                    moduloEntry = {
+                        id: modulo?.id_modulo as number,
+                        name: modulo?.nome_modulo as string,
+                        subroles: [],
+                    };
+                    acc.push(moduloEntry);
+                }
+
+                // Add the permission as a subrole
+                moduloEntry.subroles.push({
+                    id: permission.id_permissao,
+                    name: permission.nome_permissao,
+                });
+
+                return acc;
+            }, [] as { id: number; name: string; subroles: { id: number; name: string; }[] }[]);
+
+
             return {
                 token,
                 id: updatedUser.id,
@@ -94,14 +154,16 @@ class AuthUserService {
                 admin: updatedUser.admin,
                 avatar: updatedUser.avatar,
                 empresa: {
-                    id_empresa: updatedUser.empresa.id_empresa,                   
+                    id_empresa: updatedUser.empresa.id_empresa,
                     nome: updatedUser.empresa.nome,
                     endereco: updatedUser.empresa.endereco,
                     cnpj: updatedUser.empresa.cnpj,
                     telefone: updatedUser.empresa.telefone,
                     email: updatedUser.empresa.email,
 
-                }
+                },
+                perfil_acesso: permissions,
+
             }
             //return updatedUser
 
@@ -121,111 +183,6 @@ class AuthUserService {
 
 
         }
-
-
-
-
-        /* const user = await prisma.user.findFirst({
-             where: {
-                 email,
-                 login
-             },
-             include: {
-                 empresa: true // include the linked Empresa record
-             }
-         });
- 
-         if (!user) {
- 
-             const error = new Error("User not found");
-             await prisma.log.create({
-                 data: {
-                     id_user: null,
-                     id_empresa: null,
-                     descricao: `Error: ${error.message}`,
- 
-                 }
-             });
-             throw error;
- 
- 
-         }
- 
-         // Check if the linked Empresa is active
-         if (!user.empresa.ativo) {
- 
-             const error = new Error("Company is not active");
-             await prisma.log.create({
-                 data: {
-                     id_user: user.id,
-                     id_empresa: user.empresa.id_empresa,
-                     descricao: `Error: ${error.message}`,
- 
-                 }
-             });
-             throw error;
-         } else if (user.ativo) {
-             const error = new Error("User is not active");
-             await prisma.log.create({
-                 data: {
-                     id_user: user.id,
-                     id_empresa: user.empresa.id_empresa,
-                     descricao: `Error: ${error.message}`,
- 
-                 }
-             });
-             throw error;
-         }
- 
- 
- 
- 
-         const passwordMatch = await compare(password, user.password);
- 
-         if (!passwordMatch) {
-             const error = new Error("Email/Password incorrect");
-             await prisma.log.create({
-                 data: {
-                     id_user: user.id,
-                     id_empresa: user.empresa.id_empresa,
-                     descricao: `Error: ${error.message}`,
- 
-                 }
-             });
-             throw error;
-         }
- 
- 
-         const token = sign(
-             {
-                 email: user.email,
-                 login: user.login,
-             }, process.env.JWT_SECRET!,
-             {
-                 expiresIn: "1d",
-             }
-         );
- 
-         // Update lastLogin field of User record
-         const updatedUser = await prisma.user.update({
-             where: {
-                 id: user.id
-             },
-             data: {
-                 lastLogin: new Date()
-             }
-         });
- 
-         return {
-             token,
-             name: updatedUser.name,
-             login: updatedUser.login,
-             email: updatedUser.email,
-             admin: updatedUser.admin,
-             avatar: updatedUser.avatar
-         }*/
-
-
     }
 }
 

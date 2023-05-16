@@ -37,6 +37,7 @@ class UserProfileController {
         return res.json(userProfiles);
     }
 
+   
     //UPDATE USER PROFILE
     async update(req: Request, res: Response) {
         const { nome_perfil, descricao_perfil, roles } = req.body;

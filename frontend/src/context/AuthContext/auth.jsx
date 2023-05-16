@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
+    //function to login
     const signIn = async (data) => {
         setLoading(true);
 
@@ -54,6 +55,7 @@ export const AuthProvider = ({ children }) => {
                 sessionStorage.setItem('user', JSON.stringify(userData));
                 sessionStorage.setItem('token', token);
             }
+            //console.log(userData)
 
             toast.success('Login realizado com sucesso!', {
                 autoClose: 1000,
@@ -72,10 +74,17 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    
+    //function to logout
+    const signOut = () => {
+        setUser(null);
+        localStorage.clear();
+        sessionStorage.clear();
+        navigate('/');
+    };
+
 
     return (
-        <AuthContext.Provider value={{ user, setUser, signIn, isAuthenticated, loading }}>
+        <AuthContext.Provider value={{ user, setUser, signIn, signOut, isAuthenticated, loading }}>
             {children}
         </AuthContext.Provider>
     );

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useRegister } from '../../../../../../context/RegisterContext/useRegister'
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Spinner, Table } from 'reactstrap'
 import Pagination from 'react-bootstrap/Pagination';
+import EditProfileModal from '../../components/EditProfileModal';
 
 const ConfirmationModal = ({ isOpen, toggleModal, handleConfirm }) => {
   return (
@@ -27,15 +28,23 @@ const ConfirmationModal = ({ isOpen, toggleModal, handleConfirm }) => {
 };
 
 const TableListProfile = () => {
-  const { listProfile, deleteProfile, loading } = useRegister()
+  const { listProfile, updateProfile, deleteProfile, loading, loadingRoles } = useRegister()
   const [profile, setProfile] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingProfile, setEditingProfile] = useState(null);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
-  const toggleModal = () => {
-    setModalOpen(!modalOpen);
+
+
+  const toggleConfirmationModal = () => {
+    setConfirmationModalOpen(!confirmationModalOpen);
   };
+
+  const toogleModal = () => {
+    setModalOpen(!modalOpen)
+  }
 
   useEffect(() => {
     async function loadProfile() {
@@ -56,18 +65,22 @@ const TableListProfile = () => {
     setItemsPerPage(parseInt(e.target.value));
   };
 
-  const handleConfirm = async (id) => {
-    deleteProfile(id)
+  const handleDelete = async (id) => {
+    await deleteProfile(id)
 
     const response = await listProfile();
     setProfile(response);
     // Close the modal
-    toggleModal();
-
+    toggleConfirmationModal();
 
 
   };
 
+  const handleEdit = async (editedProfile) => {
+    await updateProfile(editedProfile);
+    //console.log(editedProfile)
+
+  };
 
   return (
     <>{
@@ -100,7 +113,11 @@ const TableListProfile = () => {
                         outline
                         className="mb-2 me-2 btn-transition"
                         color="primary"
-                        onClick={() => window.open(row.file, '_blank')}
+                        onClick={() => {
+                          setEditingProfile(row)
+                          toogleModal()
+                        }
+                        }
                       >
 
                         <i className="pe-7s-note btn-icon-wrapper items-" />
@@ -109,16 +126,15 @@ const TableListProfile = () => {
                         outline
                         className="mb-2 me-2 btn-transition"
                         color="danger"
-                        onClick={toggleModal}
+                        onClick={toggleConfirmationModal}
                       >
                         <i className="pe-7s-trash btn-icon-wrapper" />
 
                       </Button>
                       <ConfirmationModal
-
-                        isOpen={modalOpen}
-                        toggleModal={toggleModal}
-                        handleConfirm={() => handleConfirm(row.id_perfil)}
+                        isOpen={confirmationModalOpen}
+                        toggleModal={toggleConfirmationModal}
+                        handleConfirm={() => handleDelete(row.id_perfil)}
                       />
 
                     </div>
@@ -151,6 +167,23 @@ const TableListProfile = () => {
                 disabled={indexOfLastItem >= profile.length}
               />
             </Pagination>
+            {loadingRoles &&
+              <div className="d-flex justify-content-center align-items-center">
+                <Spinner color="primary" />
+              </div>
+            }
+
+            <EditProfileModal
+              isOpen={modalOpen}
+              toggleModal={toogleModal}
+              profile={editingProfile}
+              handleEdit={handleEdit}
+
+            />
+
+
+
+
           </div>
 
         </div>

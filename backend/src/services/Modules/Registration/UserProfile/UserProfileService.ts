@@ -120,6 +120,10 @@ class UserProfileService {
                 orderBy: {
                     id_perfil: 'asc',
                 },
+                include: {
+                    profilePermission: true,
+                },
+
             });
 
             return userProfiles;
@@ -128,6 +132,7 @@ class UserProfileService {
             throw new Error(error.message);
         }
     }
+ 
 
     //UPDATE USER PROFILE
     async update({ nome_perfil, descricao_perfil, id_permissao }: IUserProfileRequest, id_perfil: number) {
@@ -249,5 +254,7 @@ class UserProfileService {
             throw new Error(error.message);
         }
     }
+
+
 
 } export { UserProfileService };

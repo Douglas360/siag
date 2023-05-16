@@ -8,19 +8,7 @@ const FormCreateProfile = () => {
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [selectedSubroles, setSelectedSubroles] = useState([]);
 
-  const { listRoles, createProfile, loading } = useRegister();
-
-  const [roles, setRoles] = useState([]);
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      const response = await listRoles();
-      setRoles(response);
-    };
-
-    fetchRoles();
-  }, []);
-
+  const { roles, createProfile, loading } = useRegister();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -33,19 +21,14 @@ const FormCreateProfile = () => {
     //Valide if the role is empty or not 
     if (value.roles.length === 0) {
       setChecked(true);
-      return;    
+      return;
     }
-
-
-
 
     const data = {
       nome_perfil: value.nome_perfil,
       descricao_perfil: value.descricao_perfil,
       roles: value.roles,
     };
-
-    //console.log(data);
     createProfile(data);
   };
 
@@ -156,8 +139,8 @@ const FormCreateProfile = () => {
         <Row className="mt-4">
           <Col md={12}>
             <Label>{
-              checked ?<ListGroupItem color="danger">Selecione pelo menos uma Permissão</ListGroupItem> : 'Selecione as Permissões'
-              }</Label>
+              checked ? <ListGroupItem color="danger">Selecione pelo menos uma Permissão</ListGroupItem> : 'Selecione as Permissões'
+            }</Label>
 
             {roles.map((role) => (
               <FormGroup key={role.id}>
