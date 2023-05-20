@@ -27,7 +27,7 @@ const Administrative = () => (
 
 
                 </div>
-               
+
             </div>
         </div>
     </Fragment>

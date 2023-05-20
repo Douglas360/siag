@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Col, Form, FormFeedback, FormGroup, Input, Label, ListGroupItem, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 import { useRegister } from '../../../../../context/RegisterContext/useRegister';
 
@@ -12,20 +12,7 @@ const EditProfileModal = ({ isOpen, toggleModal, profile, handleEdit }) => {
 
 
     const { roles } = useRegister();
-
-
-    //   console.log(profile?.profilePermission)
-useEffect(() => {
-    const Allroles = roles.subroles
-
-    //const Allroles = roles?.map((role) => role.subroles);
-    //const RolesSelected = profile?.profilePermission?.map((role) => role.id_permissao);
-    //const selectedRoles = Allroles.find((role => role.id === RolesSelected));
-
-    
-   console.log(Allroles)
-}, [profile]);
-
+    console.log(roles)
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -116,12 +103,13 @@ useEffect(() => {
 
     return (
         <Modal isOpen={isOpen} toggle={toggleModal}>
-            <ModalHeader toggle={toggleModal}>Editar Perfil de acesso</ModalHeader>
+            <ModalHeader toggle={toggleModal} className="text-lg font-medium">
+                Editar Perfil de acesso</ModalHeader>
             <ModalBody>
                 <Form onSubmit={handleSubmit}>
                     <Row>
-                        <Col md={12}>
-                            <Label htmlFor="name">Nome do perfil</Label>
+                        <Col md={12} className='mb-4'>
+                            <Label htmlFor="name" className="mb-2 font-medium">Nome do perfil</Label>
                             <Input
                                 required
                                 type="text"
@@ -139,7 +127,7 @@ useEffect(() => {
 
 
                         <Col md={12}>
-                            <Label htmlFor="description">Descrição</Label>
+                            <Label htmlFor="description" className="mb-2 font-medium">Descrição</Label>
                             <Input
                                 type="text"
                                 name="descricao_perfil"
@@ -179,9 +167,7 @@ useEffect(() => {
                         <Button color="secondary" outline onClick={toggleModal}>
                             Cancelar
                         </Button>
-                        <Button color="primary" outline type='submit'>
-                            Salvar
-                        </Button>
+                        {nameError ? <Button color="primary" disabled>Atualizar</Button> : <Button color="primary" type="submit" outline>Atualizar</Button>}
                     </ModalFooter>
                 </Form>
             </ModalBody>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardBody, Col, Form, Input, Label, Row, FormFeedback, Button, FormGroup, Spinner, ListGroupItem } from 'reactstrap';
 import { useRegister } from '../../../../../../context/RegisterContext/useRegister';
 

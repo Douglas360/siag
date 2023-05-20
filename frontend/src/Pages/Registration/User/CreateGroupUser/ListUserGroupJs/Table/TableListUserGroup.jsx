@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useRegister } from '../../../../../../context/RegisterContext/useRegister'
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Spinner, Table } from 'reactstrap'
 import Pagination from 'react-bootstrap/Pagination';
-import EditProfileModal from '../../components/EditProfileModal';
+import EditUserGroupModal from '../../components/EditUserGroupModal';
+import { useAuth } from '../../../../../../context/AuthContext/useAuth';
+
 
 const ConfirmationModal = ({ isOpen, toggleModal, handleConfirm }) => {
   return (
@@ -27,14 +29,16 @@ const ConfirmationModal = ({ isOpen, toggleModal, handleConfirm }) => {
   );
 };
 
-const TableListProfile = () => {
-  const { listProfile, updateProfile, deleteProfile, loading, loadingUpdate } = useRegister()
-  const [profile, setProfile] = useState([])
+const TableListUserGroup = () => {
+  const { listUsers, deleteUserGroup, updateUserGroup, loading, loadingUpdate } = useRegister()
+  const [userGroup, setUserGroup] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingProfile, setEditingProfile] = useState(null);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [userGroupEditing, setUserGroupEditing] = useState({});
+
+  const {user} = useAuth()
 
 
 
@@ -42,23 +46,27 @@ const TableListProfile = () => {
     setConfirmationModalOpen(!confirmationModalOpen);
   };
 
-  const toogleModal = () => {
-    setModalOpen(!modalOpen)
-  }
+  const toggleUpdateModal = () => {
+    setUpdateModalOpen(!updateModalOpen);
+  };
+
 
   useEffect(() => {
-    async function loadProfile() {
-      const response = await listProfile()
 
-      setProfile(response)
-    }
-    loadProfile()
+    loadUserGroup()
   }, [])
+
+  const loadUserGroup = async () => {
+    const id_empresa = user?.empresa?.id_empresa
+    const response = await listUsers(id_empresa);
+    setUserGroup(response);
+  }
+
 
   // Pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = profile.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = userGroup.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleItemsPerPage = (e) => {
     setCurrentPage(1);
@@ -66,21 +74,22 @@ const TableListProfile = () => {
   };
 
   const handleDelete = async (id) => {
-    await deleteProfile(id)
+    await deleteUserGroup(id)
 
-    const response = await listProfile();
-    setProfile(response);
+    await loadUserGroup()
     // Close the modal
     toggleConfirmationModal();
 
-
   };
 
-  const handleEdit = async (editedProfile) => {
-    await updateProfile(editedProfile);
-    //console.log(editedProfile)
+  const handleEdit = async (data) => {
 
-  };
+    await updateUserGroup(data)
+    await loadUserGroup()
+      
+  }
+
+
 
   return (
     <>{
@@ -103,10 +112,10 @@ const TableListProfile = () => {
 
             <tbody>
               {currentItems?.map((row) => (
-                <tr key={row.id_perfil} className='text-center'>
-                  <th scope="row">{row.id_perfil}</th>
-                  <td className='text-center'>{row.nome_perfil}</td>
-                  <td className='text-center'>{row.descricao_perfil}</td>
+                <tr key={row.id_user} className='text-center'>
+                  <th scope="row">{row.id_user}</th>
+                  <td className='text-center'>{row.name}</td>
+                  <td className='text-center'>{row.cargo}</td>
                   <td>
                     <div>
                       <Button
@@ -114,10 +123,9 @@ const TableListProfile = () => {
                         className="mb-2 me-2 btn-transition"
                         color="primary"
                         onClick={() => {
-                          setEditingProfile(row)
-                          toogleModal()
-                        }
-                        }
+                          setUserGroupEditing(row);
+                          toggleUpdateModal();
+                        }}
                       >
 
                         <i className="pe-7s-note btn-icon-wrapper items-" />
@@ -134,7 +142,7 @@ const TableListProfile = () => {
                       <ConfirmationModal
                         isOpen={confirmationModalOpen}
                         toggleModal={toggleConfirmationModal}
-                        handleConfirm={() => handleDelete(row.id_perfil)}
+                        handleConfirm={() => handleDelete(row.id_grupo)}
                       />
 
                     </div>
@@ -164,7 +172,7 @@ const TableListProfile = () => {
               <Pagination.Item active>{currentPage}</Pagination.Item>
               <Pagination.Next
                 onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
-                disabled={indexOfLastItem >= profile.length}
+                disabled={indexOfLastItem >= userGroup.length}
               />
             </Pagination>
             {loadingUpdate &&
@@ -172,18 +180,12 @@ const TableListProfile = () => {
                 <Spinner color="primary" />
               </div>
             }
-
-            <EditProfileModal
-              isOpen={modalOpen}
-              toggleModal={toogleModal}
-              profile={editingProfile}
-              handleEdit={handleEdit}
-
+            <EditUserGroupModal
+              isOpen={updateModalOpen}
+              toggleModal={toggleUpdateModal}
+              handleUpdate={handleEdit}
+              userGroup={userGroupEditing}
             />
-
-
-
-
           </div>
 
         </div>
@@ -193,4 +195,4 @@ const TableListProfile = () => {
   )
 }
 
-export default TableListProfile
+export default TableListUserGroup

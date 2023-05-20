@@ -25,10 +25,11 @@ model User {
   cargo      String?
   ativo      Boolean   @default(true)
 
-  log          Log[]
-  documentType DocumentType[]
-  userMapping  UserProfileMapping[]
-  empresa      Empresa              @relation(fields: [id_empresa], references: [id_empresa])
+  log              Log[]
+  documentType     DocumentType[]
+  userMapping      UserProfileMapping[]
+  userGroupMapping UserGroupMapping[]
+  empresa          Empresa              @relation(fields: [id_empresa], references: [id_empresa])
 
   @@map("t_user")
 }
@@ -82,9 +83,9 @@ model Log {
 }
 
 model UserProfile {
-  id_perfil   Int    @id @default(autoincrement())
-  nome_perfil String
-  descricao_perfil   String?
+  id_perfil        Int     @id @default(autoincrement())
+  nome_perfil      String
+  descricao_perfil String?
 
   profilePermission ProfilePermission[]
   userMapping       UserProfileMapping[]
@@ -133,4 +134,24 @@ model UserProfileMapping {
   profile UserProfile @relation(fields: [id_perfil], references: [id_perfil])
 
   @@map("t_usuario_perfil")
+}
+
+model GroupUser {
+  id_grupo         Int                @id @default(autoincrement())
+  nome_grupo       String
+  descricao_grupo  String?
+  userGroupMapping UserGroupMapping[]
+
+  @@map("t_grupo_usuario")
+}
+
+model UserGroupMapping {
+  id_usuario_grupo Int @id @default(autoincrement())
+  id_grupo         Int
+  id_usuario       Int
+
+  user  User      @relation(fields: [id_usuario], references: [id])
+  group GroupUser @relation(fields: [id_grupo], references: [id_grupo])
+
+  @@map("t_usuario_grupo")
 }

@@ -7,7 +7,7 @@ interface FileObject {
   buffer: Buffer;
 }
 
-export const uploadFile = async (file: FileObject): Promise<string | Error> => {
+export const uploadFile = async (file: FileObject, folderName:string): Promise<string | Error> => {
   const s3 = new S3Client({
     // Configure your AWS credentials and region
     region: 'us-east-1',
@@ -20,8 +20,6 @@ export const uploadFile = async (file: FileObject): Promise<string | Error> => {
   
   const randomName = crypto.randomBytes(16).toString('hex');
   const newFileName = `${randomName}-${file.originalname}`;
-
-  const folderName = 'document';
 
   const uploadParams = {
     Bucket: 'siag.com.br',

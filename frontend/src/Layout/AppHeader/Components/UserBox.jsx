@@ -37,7 +37,7 @@ const UserBox = () => {
             <div className="widget-content-left">
               <UncontrolledButtonDropdown>
                 <DropdownToggle color="link" className="p-0">
-                  <img width={42} className="rounded-circle" src={avatar1} alt="" />
+                  <img width={35} height={35} className="rounded-circle mt-2" src={user?.avatar} alt="" />
                   <FontAwesomeIcon className="ms-2 opacity-8" icon={faAngleDown} />
                 </DropdownToggle>
                 <DropdownMenu end className="rm-pointers dropdown-menu-lg">
@@ -81,8 +81,8 @@ const UserBox = () => {
               </UncontrolledButtonDropdown>
             </div>
             <div className="widget-content-left  ms-3 header-user-info">
-              <div className="widget-heading">{user.name}</div>
-              <div className="widget-subheading">{user.cargo}</div>
+              <div className="widget-heading">{user?.name}</div>
+              <div className="widget-subheading">{user?.cargo}</div>
             </div>
 
             <div className="widget-content-right header-user-info ms-3">

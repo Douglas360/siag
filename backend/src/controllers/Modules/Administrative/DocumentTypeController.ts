@@ -15,8 +15,9 @@ class DocumentTypeController {
 
 
         const createDocumentTypeService = new DocumentTypeService();
+        const folderName = 'document';
 
-        const fileUrl = await uploadFile(req.file);
+        const fileUrl = await uploadFile(req.file, folderName);
 
         const documentType = await createDocumentTypeService.create({
             descricao,

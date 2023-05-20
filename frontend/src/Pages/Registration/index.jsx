@@ -9,6 +9,8 @@ import AppSidebar from '../../Layout/AppSidebar';
 //Pages
 const Company = lazy(() => import('./Company'));
 const UserProfile = lazy(() => import('./User/CreateProfile'));
+const GroupUser = lazy(() => import('./User/CreateGroupUser'));
+const User = lazy(() => import('./User/CreateUser'));
 
 
 const Registration = () => (
@@ -24,6 +26,8 @@ const Registration = () => (
                         <Route path="/" element={<Company />} />
                         <Route path="company" element={<Company />} />
                         <Route path="profile" element={<UserProfile />} />
+                        <Route path="user-group" element={<GroupUser />} />
+                        <Route path="user" element={<User />} />
 
                     </Routes>
 

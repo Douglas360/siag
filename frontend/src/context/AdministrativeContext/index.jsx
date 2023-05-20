@@ -19,7 +19,7 @@ export const AdministrativeProvider = ({ children }) => {
 
     //Function to create a document type in the database
     const createDocumentType = async (data) => {
-        console.log(data.id_user)
+        //console.log(data.id_user)
         try {
             setLoading(true);
             const response = await api.post('/create/document/type', data);

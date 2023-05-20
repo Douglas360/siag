@@ -6,6 +6,7 @@ import { SendEmailConfirmationController } from './controllers/User/SendEmailCon
 import { CompanyController } from './controllers/Modules/Registration/Company/CompanyController';
 import { DocumentTypeController } from './controllers/Modules/Administrative/DocumentTypeController';
 import { UserProfileController } from './controllers/Modules/Registration/UserProfile/UserProfileController';
+import { UserGroupController } from './controllers/Modules/Registration/UserGroup/UserGroupController';
 
 import { upload } from './config/multer';
 
@@ -16,7 +17,9 @@ const router = Router();
 router.get('/health-check', new HealthCheck().healthCheck);
 
 //Routes User
-router.post('/create/user', new CreateUserController().handle);
+router.post('/create/user',  upload.single('file'), new CreateUserController().handle);
+router.post('/check/login', new CreateUserController().checkLogin);
+router.post('/list/users', new CreateUserController().listUsers);
 router.post('/auth/user', new AuthUserController().handle);
 router.post('/send/email/confirmation', new SendEmailConfirmationController().handle);
 
@@ -36,6 +39,13 @@ router.get('/list/permissions', new UserProfileController().listPermissions);
 router.get('/list/user/profile', new UserProfileController().list);
 router.put('/update/user/profile/:id', new UserProfileController().update);
 router.delete('/delete/user/profile/:id', new UserProfileController().delete);
+
+//Routes Registration/UserGroup
+router.post('/create/user/group', new UserGroupController().create);
+router.get('/list/user/group', new UserGroupController().list);
+router.put('/update/user/group/:id', new UserGroupController().update);
+router.delete('/delete/user/group/:id', new UserGroupController().delete);
+
 
 
 export { router };

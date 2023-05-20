@@ -19,6 +19,10 @@ export const RegistrationNav = [
                 to: '/create/profile',
             },
             {
+                label: 'Grupo de Usuário',
+                to: '/create/user-group',
+            },
+            {
                 label: 'Usuário',
                 to: '/create/user',
             },
