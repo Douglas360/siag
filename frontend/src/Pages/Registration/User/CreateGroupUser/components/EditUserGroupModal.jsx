@@ -4,13 +4,10 @@ import { Button, Col, Form, FormFeedback, Input, Label, Modal, ModalBody, ModalF
 //open modal to UPDATE user group data 
 const EditUserGroupModal = ({ isOpen, toggleModal, handleUpdate, userGroup }) => {
     const [nameError, setNameError] = useState(false);
-
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         const form = new FormData(event.target);
         const value = Object.fromEntries(form.entries());
-
 
         const data = {
             id: userGroup.id_grupo,
@@ -20,7 +17,6 @@ const EditUserGroupModal = ({ isOpen, toggleModal, handleUpdate, userGroup }) =>
         await handleUpdate(data)
         toggleModal()
     }
-
     const handleNameBlur = (event) => {
         const { value } = event.target;
         // Check if the "nome_perfil" field has a size smaller or equal to 5
@@ -29,8 +25,7 @@ const EditUserGroupModal = ({ isOpen, toggleModal, handleUpdate, userGroup }) =>
         } else {
             setNameError(false); // Set the error state to false if the validation passes
         }
-    };
-
+    }
     return (
         <Modal isOpen={isOpen} toggle={toggleModal}>
 

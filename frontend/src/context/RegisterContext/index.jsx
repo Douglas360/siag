@@ -306,7 +306,7 @@ export const RegisterProvider = ({ children }) => {
 
     //function to check if login already exists
     const checkLogin = async (data) => {
-       
+
         try {
             setLoadingUpdate(true);
             const response = await api.post(`/check/login/`, data);
@@ -326,25 +326,23 @@ export const RegisterProvider = ({ children }) => {
     };
 
     //function to list use linked to a company
-    const listUsers = async (id_empresa) => {
+    const listUsers = async (data) => {
         try {
-            setLoading(true);
-            const response = await api.post('/list/users', id_empresa);
-            setLoading(false);
-            console.log(response.data)
-            return response.data;
+          setLoading(true);
+          const response = await api.post('/list/users', data);
+          return response.data;
         } catch (error) {
-            setLoading(false);
-            //console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-
-            toast.error(message, {
-                autoClose: 1000,
-                hideProgressBar: true,
-            });
-            return error
+          const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+          toast.error(message, {
+            autoClose: 1000,
+            hideProgressBar: true,
+          });
+          throw error;
+        } finally {
+          setLoading(false);
         }
-    };
+      };
+      
 
 
     return (

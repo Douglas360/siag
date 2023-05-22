@@ -5,6 +5,7 @@ import AppSidebar from '../../Layout/AppSidebar';
 
 const DocumentTemplate = lazy(() => import('../Administrative/DocumentTemplate'));
 const Register = lazy(() => import('../Administrative/Register'));
+const OfficialDocument = lazy(() => import('../Administrative/OfficialDocument'));
 //const Schedule = lazy(() => import('../Administrative/Schedule'));
 
 
@@ -21,6 +22,7 @@ const Administrative = () => (
                         <Route path="/" element={<DocumentTemplate />} />
                         <Route path="documentTemplate" element={<DocumentTemplate />} />
                         <Route path="register" element={<Register />} />
+                        <Route path="officialDocument" element={<OfficialDocument />} />
                         {/*<Route path="schedule" element={<Schedule />} />*/}
 
                     </Routes>

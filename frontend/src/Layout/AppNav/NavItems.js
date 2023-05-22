@@ -112,7 +112,7 @@ export const AdministrativeNav = [
             },
             {
                 label: 'Documentos oficiais',
-                to: '/elements/cards',
+                to: '/administrative/officialDocument',
             },
             {
                 label: 'Procedimento Padrão',

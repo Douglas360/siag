@@ -14,7 +14,7 @@ const TableBordered = () => {
   useEffect(() => {
     async function loadDocumentType() {
       const response = await listDocumentType()
-      console.log(response)
+      //console.log(response)
       setDocumentType(response);
     }
     loadDocumentType();

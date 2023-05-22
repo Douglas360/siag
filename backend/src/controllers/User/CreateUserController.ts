@@ -6,7 +6,7 @@ class CreateUserController {
 
     async handle(req: Request, res: Response) {
         const { name, email, admin, password, login, id_empresa, cargo, id_perfil, id_grupo, id_user } = req.body;
-      
+
         //verify if file is empty       
         if (!req.file) {
             throw new Error('File is empty');
@@ -50,7 +50,7 @@ class CreateUserController {
 
     async listUsers(req: Request, res: Response) {
         const { id_empresa } = req.body;
-
+       
         const createUserService = new CreateUserService();
 
         const user = await createUserService.listUsers(Number(id_empresa));

@@ -8,11 +8,7 @@ const EditProfileModal = ({ isOpen, toggleModal, profile, handleEdit }) => {
     const [selectedRoles, setSelectedRoles] = useState([]);
     const [selectedSubroles, setSelectedSubroles] = useState([]);
 
-
-
-
     const { roles } = useRegister();
-    console.log(roles)
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -80,7 +76,6 @@ const EditProfileModal = ({ isOpen, toggleModal, profile, handleEdit }) => {
             );
         }
     };
-
     const renderSubroles = (role) => {
         if (!selectedRoles.includes(role.name)) {
             return null;
@@ -92,7 +87,7 @@ const EditProfileModal = ({ isOpen, toggleModal, profile, handleEdit }) => {
                     <Input
                         type="checkbox"
                         name={subrole.name}
-                        checked={selectedRoles.includes(subrole.name)}
+                        checked={selectedRoles.includes(subrole.name)}                       
                         onChange={handleRoleChange}
                     />{' '}
                     {subrole.name}
@@ -116,7 +111,7 @@ const EditProfileModal = ({ isOpen, toggleModal, profile, handleEdit }) => {
                                 name="nome_perfil"
                                 placeholder="Nome do Perfil"
                                 onBlur={handleNameBlur}
-                                defaultValue={profile?.nome_perfil}
+                                defaultValue={profile?.nome}
                                 invalid={nameError}
                                 valid={!nameError}
                             />
@@ -132,7 +127,7 @@ const EditProfileModal = ({ isOpen, toggleModal, profile, handleEdit }) => {
                                 type="text"
                                 name="descricao_perfil"
                                 placeholder="Descrição do Perfil"
-                                defaultValue={profile?.descricao_perfil}
+                                defaultValue={profile?.descricao}
                             />
                         </Col>
 

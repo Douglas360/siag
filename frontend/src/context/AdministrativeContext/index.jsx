@@ -1,15 +1,10 @@
 import { createContext, useState } from 'react';
 import { api } from '../../services/api';
 import { toast } from 'react-toastify';
+import { ERROR_MESSAGES } from '../../config/ErrorMessage';
 
 export const AdministrativeContext = createContext();
-const ERROR_MESSAGES = {
-    'Document type not found': 'Modelo de documento não encontrado',
-    'Descrição é obrigatório': 'Descrição é obrigatório',
-    'File is empty': 'Envio do arquivo vazio',
-    'User is not active': 'Usuário não está ativo',
-    'Document type already exists': 'Número de documento já existe, favor verificar',
-};
+
 
 
 export const AdministrativeProvider = ({ children }) => {
@@ -64,11 +59,61 @@ export const AdministrativeProvider = ({ children }) => {
         }
     };
 
+    //Function to create official document in the database
+    const createOfficialDocument = async (data) => {
+
+        try {
+            setLoading(true);
+            const response = await api.post('/create/official/document', data);
+            toast.success('Documento oficial criado com sucesso!', {
+                autoClose: 1000,
+
+            });
+
+            return response.data;
+        } catch (error) {
+
+            console.log(error)
+            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
+
+            throw error
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    //Function to list all official documents in the database
+    const listOfficialDocument = async () => {
+        try {
+            setLoading(true);
+            const response = await api.get('/list/official/document');          
+
+            return response.data;
+        } catch (error) {
+            //console.log(error)
+            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
+
+            throw error
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+
 
 
 
     return (
-        <AdministrativeContext.Provider value={{ createDocumentType, listDocumentType, loading }}>
+        <AdministrativeContext.Provider value={{ createDocumentType, listDocumentType, loading, createOfficialDocument, listOfficialDocument }}>
             {children}
         </AdministrativeContext.Provider>
     )

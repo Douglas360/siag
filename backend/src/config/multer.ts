@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import crypto from 'crypto';
 import multer from 'multer';
 
@@ -7,7 +7,7 @@ interface FileObject {
   buffer: Buffer;
 }
 
-export const uploadFile = async (file: FileObject, folderName:string): Promise<string | Error> => {
+export const uploadFile = async (file?: FileObject, folderName?: string): Promise<string | Error> => {
   const s3 = new S3Client({
     // Configure your AWS credentials and region
     region: 'us-east-1',
@@ -17,14 +17,14 @@ export const uploadFile = async (file: FileObject, folderName:string): Promise<s
     },
   });
 
-  
+
   const randomName = crypto.randomBytes(16).toString('hex');
-  const newFileName = `${randomName}-${file.originalname}`;
+  const newFileName = `${randomName}-${file?.originalname}`;
 
   const uploadParams = {
     Bucket: 'siag.com.br',
     Key: `${folderName}/${newFileName}`,
-    Body: file.buffer,
+    Body: file?.buffer,
     ACL: 'public-read',
   };
 
@@ -35,6 +35,30 @@ export const uploadFile = async (file: FileObject, folderName:string): Promise<s
   } catch (error) {
     console.log(error);
     return new Error('Failed to upload the file to S3');
+  }
+};
+
+export const deleteFile = async (filePath: string): Promise<void | Error> => {
+  const s3 = new S3Client({
+    // Configure your AWS credentials and region
+    region: 'us-east-1',
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
+  });
+
+  const deleteParams = {
+    Bucket: 'siag.com.br',
+    Key: filePath,
+  };
+
+  try {
+    await s3.send(new DeleteObjectCommand(deleteParams));
+    
+  } catch (error) {
+    console.log(error);
+    return new Error('Failed to delete the file from S3');
   }
 };
 

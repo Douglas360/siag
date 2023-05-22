@@ -27,9 +27,11 @@ model User {
 
   log              Log[]
   documentType     DocumentType[]
+  officialDocument OfficialDocument[]
   userMapping      UserProfileMapping[]
   userGroupMapping UserGroupMapping[]
   empresa          Empresa              @relation(fields: [id_empresa], references: [id_empresa])
+  leitura          Leitura[]
 
   @@map("t_user")
 }
@@ -45,13 +47,15 @@ model Empresa {
   dt_criado     DateTime  @default(now())
   dt_atualizado DateTime?
 
-  users        User[]
-  log          Log[]
-  documentType DocumentType[]
+  users            User[]
+  log              Log[]
+  documentType     DocumentType[]
+  officialDocument OfficialDocument[]
 
   @@map("t_empresa")
 }
 
+//Module Administration
 model DocumentType {
   id_doc_type     Int       @id @default(autoincrement())
   descricao       String
@@ -67,6 +71,36 @@ model DocumentType {
   user    User?    @relation(fields: [id_user], references: [id])
 
   @@map("t_modelo_doc")
+}
+
+model OfficialDocument {
+  id_doc_oficial   Int       @id @default(autoincrement())
+  descricao        String
+  numero_documento String
+  tipo             String
+  arquivo          String
+  id_empresa       Int?
+  id_user          Int?
+  dt_criado        DateTime  @default(now())
+  dt_atualizado    DateTime?
+
+  user    User?     @relation(fields: [id_user], references: [id])
+  empresa Empresa?  @relation(fields: [id_empresa], references: [id_empresa], onDelete: NoAction, onUpdate: NoAction)
+  leitura Leitura[]
+
+  @@map("t_documento_oficial")
+}
+
+model Leitura {
+  id_leitura     Int      @id @default(autoincrement())
+  id_doc_oficial Int
+  id_user        Int
+  dt_leitura     DateTime @default(now())
+
+  user             User             @relation(fields: [id_user], references: [id])
+  officialDocument OfficialDocument @relation(fields: [id_doc_oficial], references: [id_doc_oficial], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("t_leitura")
 }
 
 model Log {
