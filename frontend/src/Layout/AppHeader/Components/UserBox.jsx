@@ -37,7 +37,7 @@ const UserBox = () => {
             <div className="widget-content-left">
               <UncontrolledButtonDropdown>
                 <DropdownToggle color="link" className="p-0">
-                  <img width={35} height={35} className="rounded-circle mt-2" src={user?.avatar} alt="" />
+                  <img width={35} height={35} className="rounded-circle w-10 bg-cover h-10 mt-2" src={user?.avatar} alt="" />
                   <FontAwesomeIcon className="ms-2 opacity-8" icon={faAngleDown} />
                 </DropdownToggle>
                 <DropdownMenu end className="rm-pointers dropdown-menu-lg">

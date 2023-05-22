@@ -90,7 +90,7 @@ export const AdministrativeProvider = ({ children }) => {
     const listOfficialDocument = async () => {
         try {
             setLoading(true);
-            const response = await api.get('/list/official/document');          
+            const response = await api.get('/list/official/document');
 
             return response.data;
         } catch (error) {
@@ -107,13 +107,29 @@ export const AdministrativeProvider = ({ children }) => {
         }
     };
 
+    //Function to confirm reading of official document
+    const confirmReadingOfficialDocument = async (data) => {
+        try {
+            setLoading(true);
+            const response = await api.get(`/read/official/document/${data.id_empresa}`, data);            
+
+            return response.data;
+        } catch (error) {
+            //console.log(error)
+
+        }finally{
+            setLoading(false)
+        }
+
+    }
+
 
 
 
 
 
     return (
-        <AdministrativeContext.Provider value={{ createDocumentType, listDocumentType, loading, createOfficialDocument, listOfficialDocument }}>
+        <AdministrativeContext.Provider value={{ createDocumentType, listDocumentType, loading, createOfficialDocument, listOfficialDocument,confirmReadingOfficialDocument }}>
             {children}
         </AdministrativeContext.Provider>
     )

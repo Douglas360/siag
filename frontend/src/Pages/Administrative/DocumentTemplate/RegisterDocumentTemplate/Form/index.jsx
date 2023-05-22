@@ -149,9 +149,9 @@ const FormRegister = () => {
                         <Row>
                             <Col md={6}>
                                 <FormGroup>
-                                    <Label>Nº Documento</Label>
+                                    <Label>Nome</Label>
                                     <Input type="text" name="document"
-                                        placeholder="Digite o número do documento"
+                                        placeholder="Digite o nome do documento"
                                         value={documentNumber}
                                         onChange={(e) => setDocumentNumber(e.target.value)}
                                         onBlur={handleDocumentBlur}

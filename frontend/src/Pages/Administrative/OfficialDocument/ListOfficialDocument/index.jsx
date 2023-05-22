@@ -12,12 +12,14 @@ import {
 
 } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip } from 'reactstrap';
+import { useAuth } from '../../../../context/AuthContext/useAuth';
 
 const TableView = lazy(() => import('../../../../components/Table/TableView'));
 
 
 const ListOfficialDocumentJs = () => {
-    const { listOfficialDocument, updateProfile, deleteProfile } = useAdministrative()
+    const { listOfficialDocument, updateProfile, deleteProfile, confirmReadingOfficialDocument } = useAdministrative()
+    const { user } = useAuth()
     const [officialDocument, setOfficialDocument] = useState([])
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -47,6 +49,14 @@ const ListOfficialDocumentJs = () => {
     const toogleModal = () => {
         setModalOpen(!modalOpen)
     }
+
+    const handleConfirmReading = async (data) => {
+        await confirmReadingOfficialDocument(data)
+        const response = await listOfficialDocument()
+        setEditingProfile(response)
+        toggleConfirmationModal()
+    }
+
     const handleDelete = async (id) => {
         await deleteProfile(id);
         const response = await listOfficialDocument();
@@ -117,7 +127,7 @@ const ListOfficialDocumentJs = () => {
             dt_atualizado: row.dt_atualizado ? dateFormatWithHours(row.dt_atualizado) : "-",
             id_user: row.user?.login,
             documento: (
-                <a href={row.arquivo} target="_blank" rel="noreferrer" download>
+                <a href={row.arquivo} onClick={handleConfirmReading(row)} target="_blank" rel="noreferrer" download>
                     {getFileIcon(row.arquivo)}
                 </a>
 
@@ -134,13 +144,13 @@ const ListOfficialDocumentJs = () => {
 
         }
     }) || []
-   
+
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <TableView
                 columns={columns}
                 rows={rows}
-                handleDelete={handleDelete}
+                handleDelete={handleConfirmReading}
                 handleEdit={handleEdit}
                 id="id_doc_oficial"
                 button1={"Abrir"} />

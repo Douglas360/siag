@@ -1,63 +1,73 @@
-import React from 'react'
+import { useState } from "react";
+import "./styles.css";
+import 'react-toastify/dist/ReactToastify.css';
+
+import { Button, CardTitle, Form, Input, Label, Spinner } from "reactstrap";
+import { useAuth } from "../../context/AuthContext/useAuth";
 
 const Login = () => {
-  return (
-    <div className="relative flex flex-col justify-center min-h-screen overflow-hidden">
-    <div className="w-full p-6 m-auto bg-white rounded-md shadow-md lg:max-w-xl">
-        <h1 className="text-3xl font-semibold text-center text-purple-700 underline">
-           Sign in
-        </h1>
-        <form className="mt-6">
-            <div className="mb-2">
-                <label
-                    for="email"
-                    className="block text-sm font-semibold text-gray-800"
-                >
-                    Email
-                </label>
-                <input
-                    type="email"
-                    className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                />
-            </div>
-            <div className="mb-2">
-                <label
-                    for="password"
-                    className="block text-sm font-semibold text-gray-800"
-                >
-                    Password
-                </label>
-                <input
-                    type="password"
-                    className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                />
-            </div>
-            <a
-                href="#"
-                className="text-xs text-purple-600 hover:underline"
-            >
-                Forget Password?
-            </a>
-            <div className="mt-6">
-                <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600">
-                    Login
-                </button>
-            </div>
-        </form>
+    const [login, setLogin] = useState('');
+    const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(false);
 
-        <p className="mt-8 text-xs font-light text-center text-gray-700">
-            {" "}
-            Don't have an account?{" "}
-            <a
-                href="#"
-                className="font-medium text-purple-600 hover:underline"
+    const { signIn, loading } = useAuth()
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        // Validate the login credentials and send a request to the server
+        const data = {
+            login,
+            password,
+            rememberMe
+        }
+
+        signIn(data)
+    }
+
+    return (
+
+        <div className="login-container">
+
+            {loading && <Spinner color="primary" />}
+            <CardTitle className="mb-1.5">Login</CardTitle>
+            <Form onSubmit={handleSubmit}
             >
-                Sign up
-            </a>
-        </p>
-    </div>
-</div>
-  )
+                <CardTitle>Usuário</CardTitle>
+
+                <Input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={login}
+                    onChange={(event) => setLogin(event.target.value)}
+                    required
+                />
+                <CardTitle>Senha</CardTitle>
+                <Input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    required
+                />
+                <Label htmlFor="remember-me">
+                    <Input
+                        type="checkbox"
+                        id="remember-me"
+                        name="remember-me"
+                        checked={rememberMe}
+                        onChange={(event) => setRememberMe(event.target.checked)}
+                    />
+                    Lembrar-me
+                </Label>
+                <Button type="submit" outline color="info">Entrar</Button>
+            </Form>
+            <p>
+                Não tem uma conta? <a href="/signup">Cadastrar</a>
+            </p>
+        </div>
+    )
 }
 
 export default Login
