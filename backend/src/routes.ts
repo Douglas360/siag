@@ -18,7 +18,7 @@ const router = Router();
 router.get('/health-check', new HealthCheck().healthCheck);
 
 //Routes User
-router.post('/create/user',  upload.single('file'), new CreateUserController().handle);
+router.post('/create/user', upload.single('file'), new CreateUserController().handle);
 router.post('/check/login', new CreateUserController().checkLogin);
 router.post('/list/users', new CreateUserController().listUsers);
 router.post('/auth/user', new AuthUserController().handle);
@@ -37,7 +37,9 @@ router.delete('/delete/document/type/:id', new DocumentTypeController().delete);
 //Routes Administrative/OfficialDocument
 router.post('/create/official/document', upload.single('file'), new OfficialDocumentController().create);
 router.get('/list/official/document', new OfficialDocumentController().list);
-router.get('/read/official/document/:id', new OfficialDocumentController().read);
+router.get('/list/official/document/:id_user', new OfficialDocumentController().listByUser);
+router.get('/list/official/document/read/:id', new OfficialDocumentController().listRead);
+router.post('/read/official/document/:id', new OfficialDocumentController().read);
 router.put('/update/official/document/:id', new OfficialDocumentController().update);
 router.delete('/delete/official/document/:id', new OfficialDocumentController().delete);
 

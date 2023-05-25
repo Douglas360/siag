@@ -96,7 +96,6 @@ class OfficialDocumentService {
         }
     }
 
-    //LIST OFFICIAL DOCUMENT 
     async list() {
         try {
             const documentType = await prismaClient.officialDocument.findMany({
@@ -113,12 +112,86 @@ class OfficialDocumentService {
                         },
                     },
                 },
+                orderBy: {
+                    dt_criado: "desc",
+                },
             });
             return documentType;
         } catch (error) {
             throw error;
         }
     }
+
+    //LIST OFFICIAL BY USER DOCUMENT AND IF USER READ THIS OFFICIAL DOCUMENT IN LEITURA TABLE
+    async listByUser(id_user: number) {
+        try {
+            const documents = await prismaClient.officialDocument.findMany({
+                where: {
+                    leitura: {
+                        some: {
+                            id_user: id_user,
+                        },
+                    },
+                },
+                include: {
+                    leitura: true,
+                },
+            });
+
+            const documentsRead = documents.map((document) => {
+                return {
+                    id_doc_oficial: document.id_doc_oficial,
+                    dt_leitura: document.leitura[0]?.dt_leitura || null,
+                };
+            });
+
+            return documentsRead;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    //LIST HOW MANY USERS READ THIS OFFICIAL DOCUMENT IN LEITURA TABLE AND HOW MANY USER HAVE IN USER TABLE LINKED ID_EMPRESA
+    async listRead(id_empresa: number) {
+        try {
+            const documents = await prismaClient.officialDocument.findMany({
+                where: {
+                    id_empresa: id_empresa,
+                },
+                include: {
+                    leitura: true,
+                    empresa: {
+                        include: {
+                            users: {
+                                where: {
+                                    ativo: true,
+                                },
+                            },
+                        },
+                    },
+                },
+                orderBy: {
+                    id_doc_oficial: 'desc',
+                },
+            });
+
+            const documentsRead = documents.map((document) => {
+                return {
+                    id_doc_oficial: document.id_doc_oficial,
+                    qnt_user_read: document.leitura.length,
+                    total_users: document.empresa?.users.length,
+                };
+            });
+
+            return documentsRead;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+
+
 
     //READ OFFICIAL DOCUMENT AND UPDATE LEITURA TABLE
     async read(id: number, id_user: number): Promise<{ message: string }> {
@@ -135,11 +208,6 @@ class OfficialDocumentService {
 
         if (!officialDocument) {
             throw new Error("Official document not found");
-        }
-
-        // Check permissions
-        if (officialDocument.id_user !== id_user) {
-            throw new Error('You are not authorized to read this official document');
         }
 
         //Check if any user read this document type in Leitura
@@ -271,7 +339,7 @@ class OfficialDocumentService {
         });
 
         //Delete file from S3
-        console.log(documentDeleted.arquivo)
+
         await deleteFile(documentDeleted.arquivo);
 
 

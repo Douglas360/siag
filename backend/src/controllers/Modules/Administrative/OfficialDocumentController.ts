@@ -41,10 +41,29 @@ class OfficialDocumentController {
         res.json(documentType);
     }
 
+    //LIST OFFICIAL DOCUMENT BY USER
+    async listByUser(req: Request, res: Response) {
+        const { id_user } = req.params;
+
+        const getOfficialDocumentService = new OfficialDocumentService();
+        const documentType = await getOfficialDocumentService.listByUser(Number(id_user));
+        res.json(documentType);
+    }
+
+    //LIST HOW MANY USERS READ THE DOCUMENT
+    async listRead(req: Request, res: Response) {
+        const { id } = req.params;
+
+        const getOfficialDocumentService = new OfficialDocumentService();
+        const documentType = await getOfficialDocumentService.listRead(Number(id));
+        res.json(documentType);
+    }
+
     //READ OFFICIAL DOCUMENT
     async read(req: Request, res: Response) {
         const { id } = req.params;
         const { id_user } = req.body;
+
 
         const readOfficialDocumentService = new OfficialDocumentService();
 
@@ -71,12 +90,12 @@ class OfficialDocumentController {
     //DELETE DOCUMENT TYPE
     async delete(req: Request, res: Response) {
         const { id } = req.params;
-        const { id_user} = req.body;
+        const { id_user } = req.body;
 
         const deleteOfficialDocumentService = new OfficialDocumentService();
 
         const documentType = await deleteOfficialDocumentService.delete(Number(id), Number(id_user));
-      
+
 
         res.json(documentType);
     }

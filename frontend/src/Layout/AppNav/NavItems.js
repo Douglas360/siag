@@ -1,7 +1,7 @@
 export const MainNav = [
     {
-        icon: 'pe-7s-keypad',
-        label: 'Dashboard',
+        icon: 'pe-7s-home',
+        label: 'Inicio',
 
 
         to: '/dashboards/basic',

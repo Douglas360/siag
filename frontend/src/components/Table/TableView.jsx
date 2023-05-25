@@ -27,7 +27,7 @@ const DeleteModal = ({ isOpen, toggleModal, handleConfirm }) => {
 const TableView = ({ columns, rows, handleDelete, handleEdit, id, button1 }) => {
     const { loading, loadingUpdate } = useRegister();
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
@@ -42,8 +42,6 @@ const TableView = ({ columns, rows, handleDelete, handleEdit, id, button1 }) => 
     };
 
     const handleConfirm = () => {
-        // Delete the item
-        //console.log(selectedItem?.[id])
         handleDelete(selectedItem?.[id]);
         // Close the delete modal
         setDeleteModalOpen(false);

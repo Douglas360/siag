@@ -107,17 +107,61 @@ export const AdministrativeProvider = ({ children }) => {
         }
     };
 
-    //Function to confirm reading of official document
-    const confirmReadingOfficialDocument = async (data) => {
+    //Function to list documents already read by the user
+    const getUserReadDocuments = async (data) => {
         try {
             setLoading(true);
-            const response = await api.get(`/read/official/document/${data.id_empresa}`, data);            
+            const response = await api.get(`/list/official/document/${data}`);
 
             return response.data;
         } catch (error) {
             //console.log(error)
+            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
 
-        }finally{
+            throw error
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    //Function to list how many users have read the document and how many have not read it yet by id_empresa
+    const getOfficialDocumentRead = async (data) => {
+        try {
+            setLoading(true);
+            const response = await api.get(`/list/official/document/read/${data}`);
+
+            return response.data;
+        } catch (error) {
+            //console.log(error)
+            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
+
+            throw error
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    //Function to confirm reading of official document
+    const confirmReadingOfficialDocument = async (data) => {
+
+
+        try {
+            setLoading(true);
+            const response = await api.post(`/read/official/document/${data.id_doc_oficial}`, data);
+
+            return response.data;
+        } catch (error) {
+            console.log(error)
+
+        } finally {
             setLoading(false)
         }
 
@@ -129,7 +173,7 @@ export const AdministrativeProvider = ({ children }) => {
 
 
     return (
-        <AdministrativeContext.Provider value={{ createDocumentType, listDocumentType, loading, createOfficialDocument, listOfficialDocument,confirmReadingOfficialDocument }}>
+        <AdministrativeContext.Provider value={{ createDocumentType, listDocumentType, loading, createOfficialDocument, listOfficialDocument, confirmReadingOfficialDocument, getUserReadDocuments, getOfficialDocumentRead }}>
             {children}
         </AdministrativeContext.Provider>
     )

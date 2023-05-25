@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
-import loginMainImage from '../../assets/utils/images/login-main-img.svg';
+import loginMainImage from '../../assets/utils/images/login-main-img.jpg';
 import { useAuth } from "../../context/AuthContext/useAuth";
 import { Spinner } from 'reactstrap';
 
@@ -87,7 +87,7 @@ const Login = () => {
                 </div>
             </div>
             <div className="hidden lg:block relative flex-1 mt-10">
-                <img className=" h-2/3 w-2/3"
+                <img 
                     src={loginMainImage} alt="" />
             </div>
         </div>

@@ -3,15 +3,11 @@ import {
     BrowserRouter as Router,
     Routes,
     Route,
+    //Navigate,
     
 
 } from 'react-router-dom';
-
-
-//import { EventsProvider } from '../context/EventsContext';
 import { useAuth } from '../context/AuthContext/useAuth';
-//import { AuthProvider } from '../context/AuthContext/auth';
-
 import {CombinedProvider} from '../context/index'
 
 
@@ -46,7 +42,7 @@ export const AppRouter = () => {
         return isAuthenticated ? children : <Login />
     }
 
-   /* const Authenticated = ({ children }) => {
+  /*  const Authenticated = ({ children }) => {
         const token = localStorage.getItem('token') || null;
         return token ? <Navigate to="/dashboards/basic" /> : children
     }*/
