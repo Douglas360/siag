@@ -167,11 +167,6 @@ export const AdministrativeProvider = ({ children }) => {
 
     }
 
-
-
-
-
-
     return (
         <AdministrativeContext.Provider value={{ createDocumentType, listDocumentType, loading, createOfficialDocument, listOfficialDocument, confirmReadingOfficialDocument, getUserReadDocuments, getOfficialDocumentRead }}>
             {children}

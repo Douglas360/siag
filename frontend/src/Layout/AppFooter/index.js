@@ -35,7 +35,7 @@ const AppFooter = () => {
                   <div className="badge bg-success me-1 ms-0">
                     <small>NEW</small>
                   </div>
-                  Footer Link 4
+                 v1.04
                 </a>
               </li>
             </ul>
