@@ -6,8 +6,6 @@ class UserProfileController {
     async create(req: Request, res: Response) {
         const { nome_perfil, descricao_perfil, roles } = req.body;
 
-
-
         const userProfileService = new UserProfileService();
 
         const userProfile = await userProfileService.create({

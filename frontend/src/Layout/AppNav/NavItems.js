@@ -35,6 +35,10 @@ export const RegistrationNav = [
                 label: 'Prestadores de Serviços',
                 to: '/charts/chartjs',
             },
+            {
+                label: 'Cargo',
+                to: '/create/job/name',
+            },
 
         ],
 

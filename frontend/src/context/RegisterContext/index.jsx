@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { api } from '../../services/api';
 import { toast } from 'react-toastify';
+import { ERROR_MESSAGES } from '../../config/ErrorMessage';
 
 export const RegisterContext = createContext();
 
@@ -9,349 +10,313 @@ export const RegisterProvider = ({ children }) => {
     const [roles, setRoles] = useState([]);
     const [loadingUpdate, setLoadingUpdate] = useState(false);
 
-    //useEffect to list roles when the page is loaded 
-    useEffect(() => {
-        listRoles();
-
-    }, []);
-
-
-    const ERROR_MESSAGES = {
-        'A company with this CNPJ and email already exists': 'Empresa com este CNPJ e email já existe',
-        'Descrição é obrigatório': 'Descrição é obrigatório',
-        'File is empty': 'Envio do arquivo vazio',
-        'Name is required': 'Nome é obrigatório',
-        'User is not active': 'Usuário não está ativo',
-        'Document type already exists': 'Número de documento já existe, favor verificar',
-        'Email is required': 'Email é obrigatório',
-        'User profile already exists': 'Perfil de usuário já existe',
-        'Profile name is required': 'Nome do perfil é obrigatório',
-        'User profile does not exists': 'Perfil de usuário não existe',
-        'User profile is being used by a user': 'Perfil de usuário em uso no sistema',
-        'Group name is required': 'Nome do grupo é obrigatório',
-        'Group id is required': 'Id do grupo é obrigatório',
-        'User group does not exists': 'Grupo de usuário não existe',
-        'User group deleted successfully': 'Grupo de usuário deletado com sucesso',
-        'User group already exists': 'Grupo de usuário já existe',
-        'User with this email already exists': 'Usuário com este email já existe',
-        'User with this login already exists': 'Usuário com este login já existe',
-
-
+    const handleRequest = async (requestPromise) => {
+        try {
+            setLoading(true);
+            const response = await requestPromise;
+            return response.data;
+        } catch (error) {
+            const message =
+                ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 2000,
+                hideProgressBar: true,
+            });
+            throw error;
+        } finally {
+            setLoading(false);
+        }
     };
 
-    //function to update company data
-    const updateCompany = async (data) => {
-        console.log(data.id_empresa)
+    // useEffect to list roles when the page is loaded
+    useEffect(() => {
+        listRoles();
+    }, []);
 
+    // function to update company data
+    const updateCompany = async (data) => {
         try {
             setLoading(true);
             const response = await api.put('/update/company', data);
             toast.success('Dados atualizados com sucesso!', {
-                autoClose: 1000,
+                autoClose: 2000,
             });
-            setLoading(false);
             return response.data;
         } catch (error) {
-            setLoading(false);
-            console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            const message =
+                ERROR_MESSAGES[error.response?.data.error] || 'Erro desconhecido';
             toast.error(message, {
-                autoClose: 1000,
+                autoClose: 2000,
                 hideProgressBar: true,
             });
-            return error
-        }
-    };
-
-    //function to list roles
-    const listRoles = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/list/permissions');
-            setRoles(response.data)
-            setLoading(false);
-            return response.data;
-        } catch (error) {
-            setLoading(false);
-            console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-            toast.error(message, {
-                autoClose: 1000,
-                hideProgressBar: true,
-            });
-            return error
-        }
-    };
-
-    //function to create User Profile
-    const createProfile = async (data) => {
-        try {
-            setLoading(true);
-            const response = await api.post('/create/user/profile', data);
-            toast.success('Perfil criado com sucesso!', {
-                autoClose: 1000,
-            });
-            setLoading(false);
-            return response.data;
-        } catch (error) {
-            setLoading(false);
-            console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-            toast.error(message, {
-                autoClose: 1000,
-                hideProgressBar: true,
-            });
-            return error
-        }
-    };
-
-    //function to list User Profile
-    const listProfile = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/list/user/profile');
-            setLoading(false);
-
-            return response.data;
-        } catch (error) {
-            setLoading(false);
-            console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-            toast.error(message, {
-                autoClose: 1000,
-                hideProgressBar: true,
-            });
-            return error
-        }
-    };
-
-    //function to update User Profile by id in params
-    const updateProfile = async (data) => {
-        try {
-
-            setLoadingUpdate(true);
-            const response = await api.put(`/update/user/profile/${data.id}`, data);
-            toast.success('Perfil atualizado com sucesso!', {
-                autoClose: 1000,
-            });
-            setLoadingUpdate(false);
-            return response.data;
-
-        } catch (error) {
-            setLoadingUpdate(false);
-            console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-            toast.error(message, {
-                autoClose: 1000,
-                hideProgressBar: true,
-            });
-            return error
-
-        }
-    };
-
-    //function to list User Profile by id in params
-    const listProfileById = async (id) => {
-        try {
-            setLoading(true);
-            const response = await api.get(`/list/user/profile/${id}`);
-            setLoading(false);
-            return response.data;
-        } catch (error) {
-            setLoading(false);
-            console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-            toast.error(message, {
-                autoClose: 1000,
-                hideProgressBar: true,
-            });
-            return error
-        }
-    };
-
-
-    //function to delete User Profile by id in params
-    const deleteProfile = async (id) => {
-        try {
-            setLoading(true);
-            const response = await api.delete(`/delete/user/profile/${id}`);
-            toast.success('Perfil deletado com sucesso!', {
-                autoClose: 1000,
-            });
-            setLoading(false);
-            return response.data;
-        } catch (error) {
-            setLoading(false);
-            console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-            toast.error(message, {
-
-            });
-            return error
-        }
-    };
-
-    //function to create User Group
-    const createUserGroup = async (data) => {
-        try {
-            setLoading(true);
-            const response = await api.post('/create/user/group', data);
-            toast.success('Grupo criado com sucesso!', {
-                autoClose: 1000,
-            });
-            setLoading(false);
-            return response.data;
-        } catch (error) {
-            setLoading(false);
-            //console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.error] || 'Erro desconhecido';
-            toast.error(message, {
-                autoClose: 1000,
-                hideProgressBar: true,
-            });
-            return error
-        }
-    };
-
-    //function to list User Group
-    const listUserGroup = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/list/user/group');
-            setLoading(false);
-            return response.data;
-        } catch (error) {
-            setLoading(false);
-            console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-            toast.error(message, {
-                autoClose: 1000,
-                hideProgressBar: true,
-            });
-            return error
-        }
-    };
-
-    //function to update User Group by id in params
-    const updateUserGroup = async (data) => {
-        try {
-
-            setLoadingUpdate(true);
-            const response = await api.put(`/update/user/group/${data.id}`, data);
-            toast.success('Grupo atualizado com sucesso!', {
-                autoClose: 1000,
-            });
-            await listUserGroup();
-            setLoadingUpdate(false);
-            return response.data;
-
-        } catch (error) {
-            setLoadingUpdate(false);
-
-            const message = ERROR_MESSAGES[error.response?.data.error] || 'Erro desconhecido';
-            toast.error(message, {
-                autoClose: 1000,
-                hideProgressBar: true,
-            });
-            return error
-
-        }
-    };
-
-    //function to delete User Group by id in params
-    const deleteUserGroup = async (id) => {
-        try {
-            setLoading(true);
-            const response = await api.delete(`/delete/user/group/${id}`);
-            toast.success('Grupo deletado com sucesso!', {
-                autoClose: 1000,
-            });
-            setLoading(false);
-            return response.data;
-        } catch (error) {
-            setLoading(false);
-            console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-            toast.error(message, {
-
-            });
-            return error
-        }
-    };
-
-    //function to create User
-    const createUser = async (data) => {
-        //console.log(data.id_empresa)
-        try {
-            setLoading(true);
-
-            const response = await api.post('/create/user', data);
-            toast.success('Usuário criado com sucesso!', {
-                autoClose: 1000,
-            });
-            setLoading(false);
-            return response.data;
-        } catch (error) {
-            setLoading(false);
-            //console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-
-            toast.error(message, {
-                autoClose: 1000,
-                hideProgressBar: true,
-            });
-            return error
-        }
-    };
-
-    //function to check if login already exists
-    const checkLogin = async (data) => {
-
-        try {
-            setLoadingUpdate(true);
-            const response = await api.post(`/check/login/`, data);
-            setLoadingUpdate(false);
-            return response.data;
-        } catch (error) {
-            setLoadingUpdate(false);
-            //console.log(error)
-            const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-
-            toast.error(message, {
-                autoClose: 1000,
-                hideProgressBar: true,
-            });
-            return error
-        }
-    };
-
-    //function to list use linked to a company
-    const listUsers = async (data) => {
-        try {
-          setLoading(true);
-          const response = await api.post('/list/users', data);
-          return response.data;
-        } catch (error) {
-          const message = ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
-          toast.error(message, {
-            autoClose: 1000,
-            hideProgressBar: true,
-          });
-          throw error;
+            throw error;
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
-      
+    };
 
+    // function to list roles
+    const listRoles = async () => {
+        return handleRequest(api.get('/list/permissions')).then((response) =>
+            setRoles(response)
+        );
+    };
+
+    // function to create User Profile
+    const createProfile = async (data) => {
+        return handleRequest(api.post('/create/user/profile', data)).then(
+            (response) => {
+                toast.success('Perfil criado com sucesso!', {
+                    autoClose: 2000,
+                });
+                return response;
+            }
+        );
+    };
+
+    // function to list User Profile
+    const listProfile = async () => {
+        return handleRequest(api.get('/list/user/profile'));
+    };
+
+    // function to update User Profile by id in params
+    const updateProfile = async (data) => {
+        return handleRequest(
+            api.put(`/update/user/profile/${data.id}`, data)
+        ).then((response) => {
+            toast.success('Perfil atualizado com sucesso!', {
+                autoClose: 2000,
+            });
+            return response;
+        });
+    };
+
+    // function to list User Profile by id in params
+    const listProfileById = async (id) => {
+        return handleRequest(api.get(`/list/user/profile/${id}`));
+    };
+
+    // function to delete User Profile by id in params
+    const deleteProfile = async (id) => {
+        return handleRequest(api.delete(`/delete/user/profile/${id}`)).then(
+            (response) => {
+                toast.success('Perfil deletado com sucesso!', {
+                    autoClose: 2000,
+                });
+                return response;
+            }
+        );
+    };
+
+    // function to create User Group
+    const createUserGroup = async (data) => {
+        return handleRequest(api.post('/create/user/group', data)).then(
+            (response) => {
+                toast.success('Grupo criado com sucesso!', {
+                    autoClose: 2000,
+                });
+                return response;
+            }
+        );
+    };
+
+    // function to list User Group
+    const listUserGroup = async () => {
+        return handleRequest(api.get('/list/user/group'));
+    };
+
+    //function to list User inside a User Group by id in params
+    const listUserInsideUserGroup = async (id) => {
+        return handleRequest(api.get(`/list/users/inside/group/${id}`));
+    };
+
+    // function to update User Group by id in params
+    const updateUserGroup = async (data) => {
+        console.log(data)
+        return handleRequest(
+            api.put(`/update/user/group/${data.id}`, data)
+        ).then((response) => {
+            toast.success('Grupo atualizado com sucesso!', {
+                autoClose: 2000,
+            });
+            return response;
+        });
+    };
+
+    // function to delete User Group by id in params
+    const deleteUserGroup = async (id) => {
+        return handleRequest(api.delete(`/delete/user/group/${id}`)).then(
+            (response) => {
+                toast.success('Grupo deletado com sucesso!', {
+                    autoClose: 2000,
+                });
+                return response;
+            }
+        );
+    };
+
+    // function to create User
+    const createUser = async (data) => {
+        return handleRequest(api.post('/create/user', data)).then((response) => {
+            toast.success('Usuário criado com sucesso!', {
+                autoClose: 2000,
+            });
+            return response;
+        });
+    };
+
+    // function to check if login already exists
+    const checkLogin = async (data) => {
+        return handleRequest(api.post(`/check/login/`, data));
+    };
+
+    // function to list users linked to a company
+    const listUsers = async (data) => {
+        return handleRequest(api.post('/list/users', data));
+    };
+
+    // function to list user by id in params
+    const listUserById = async (id) => {
+        return handleRequest(api.post(`/list/user/${id}`));
+    };
+
+
+    // function to update User by id in params
+    const updateUser = async (data, id) => {
+
+        return handleRequest(api.put(`/update/user/${id}`, data)).then(
+            (response) => {
+                toast.success('Usuário atualizado com sucesso!', {
+                    autoClose: 2000,
+                });
+                return response;
+            }
+        );
+    };
+
+    // function to update User Status by id in params
+    const updateUserStatus = async (id, status) => {
+        console.log(status)
+        return handleRequest(api.put(`/update/user/status/${id}`, status)).then(
+            (response) => {
+                toast.success('Usuário atualizado com sucesso!', {
+                    autoClose: 2000,
+                });
+                return response;
+            }
+        );
+    };
+
+
+    //function to delete User by id in params
+    const deleteUser = async (id) => {
+        return handleRequest(api.delete(`/delete/user/${id}`)).then(
+            (response) => {
+                toast.success('Usuário deletado com sucesso!', {
+                    autoClose: 2000,
+                });
+                return response;
+            }
+        );
+    };
+
+
+
+    // function to create JobName
+    const createJobName = async (data) => {
+        return handleRequest(api.post('/create/job/name', data)).then(
+            (response) => {
+                toast.success('Cargo criado com sucesso!', {
+                    autoClose: 1000,
+                });
+                return response;
+            }
+        );
+    };
+
+    // function to list JobName linked to a company
+    const listJobName = async (data) => {
+        return handleRequest(
+            api.get(`/list/job/name/id_company/${data}`))
+    };
+
+    // function to update JobName by id in params
+    const updateJobName = async (data) => {
+        try {
+            setLoadingUpdate(true);
+            const response = await handleRequest(
+                api.put(`/update/job/name/${data.id_cargo}`, data)
+            );
+            toast.success('Cargo atualizado com sucesso!', {
+                autoClose: 1000,
+            });
+            return response.data;
+        } catch (error) {
+            const message =
+                ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 1000,
+                hideProgressBar: true,
+            });
+            throw error;
+        } finally {
+            setLoadingUpdate(false);
+        }
+    };
+
+    // function to delete JobName by id in params
+    const deleteJobName = async (id) => {
+        try {
+            setLoadingUpdate(true);
+            const response = await handleRequest(api.delete(`/delete/job/name/${id}`));
+            toast.success('Cargo deletado com sucesso!', {
+                autoClose: 2000,
+            });
+            return response.data;
+        } catch (error) {
+            const message =
+                ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+            toast.error(message, {
+                autoClose: 2000,
+                hideProgressBar: true,
+            });
+            throw error;
+        } finally {
+            setLoadingUpdate(false);
+        }
+    };
 
     return (
-        <RegisterContext.Provider value={{ loading, loadingUpdate, updateCompany, roles, createProfile, listProfile, deleteProfile, updateProfile, listProfileById, createUserGroup, listUserGroup, deleteUserGroup, updateUserGroup, createUser, checkLogin, listUsers }}>
+        <RegisterContext.Provider
+            value={{
+                loading,
+                loadingUpdate,
+                updateCompany,
+                roles,
+                createProfile,
+                listProfile,
+                deleteProfile,
+                updateProfile,
+                listProfileById,
+                createUserGroup,
+                listUserGroup,
+                listUserInsideUserGroup,
+                deleteUserGroup,
+                updateUserGroup,
+                createUser,
+                deleteUser,
+                updateUserStatus,
+                listUserById,
+                updateUser,
+                checkLogin,
+                listUsers,
+                createJobName,
+                listJobName,
+                updateJobName,
+                deleteJobName,
+            }}
+        >
             {children}
         </RegisterContext.Provider>
-
-
-    )
-}
-
-
+    );
+};

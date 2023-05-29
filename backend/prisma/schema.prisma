@@ -11,26 +11,26 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  email      String    @unique
-  name       String?
-  login      String    @unique
-  password   String
-  admin      Boolean   @default(false)
-  avatar     String?
-  id_empresa Int
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime?
-  lastLogin  DateTime?
-  cargo      String?
-  ativo      Boolean   @default(true)
-
+  id               Int                  @id @default(autoincrement())
+  email            String               @unique
+  name             String?
+  login            String               @unique
+  password         String
+  admin            Boolean              @default(false)
+  avatar           String?
+  id_empresa       Int
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime?
+  lastLogin        DateTime?
+  id_cargo         Int?
+  ativo            Boolean              @default(true)
   log              Log[]
   documentType     DocumentType[]
   officialDocument OfficialDocument[]
   userMapping      UserProfileMapping[]
   userGroupMapping UserGroupMapping[]
   empresa          Empresa              @relation(fields: [id_empresa], references: [id_empresa])
+  cargo            JobName?             @relation(fields: [id_cargo], references: [id_cargo], onDelete: NoAction, onUpdate: NoAction)
   leitura          Leitura[]
 
   @@map("t_user")
@@ -51,6 +51,7 @@ model Empresa {
   log              Log[]
   documentType     DocumentType[]
   officialDocument OfficialDocument[]
+  jobName          JobName[]
 
   @@map("t_empresa")
 }
@@ -188,4 +189,14 @@ model UserGroupMapping {
   group GroupUser @relation(fields: [id_grupo], references: [id_grupo])
 
   @@map("t_usuario_grupo")
+}
+
+model JobName {
+  id_cargo   Int     @id @default(autoincrement())
+  id_empresa Int
+  nome_cargo String
+  empresa    Empresa @relation(fields: [id_empresa], references: [id_empresa], onDelete: NoAction, onUpdate: NoAction)
+  user       User[]
+
+  @@map("t_cargo")
 }

@@ -3,67 +3,71 @@ import { UserGroupService } from "../../../../services/Modules/Registration/User
 
 class UserGroupController {
     async create(req: Request, res: Response) {
-        try {
-            const { nome_grupo, descricao_grupo } = req.body;
 
-            const userGroupService = new UserGroupService();
+        const { nome_grupo, descricao_grupo } = req.body;
 
-            const userGroup = await userGroupService.create({
-                nome_grupo,
-                descricao_grupo,
-            });
+        const userGroupService = new UserGroupService();
 
-            return res.json(userGroup);
-        } catch (error: any) {
-            return res.status(400).json({ error: error.message });
-        }
+        const userGroup = await userGroupService.create({
+            nome_grupo,
+            descricao_grupo,
+        });
+
+        return res.json(userGroup);
+
     }
 
     async list(req: Request, res: Response) {
-        try {
-            const userGroupService = new UserGroupService();
 
-            const userGroups = await userGroupService.getAll();
+        const userGroupService = new UserGroupService();
 
-            return res.json(userGroups);
-        } catch (error: any) {
-            return res.status(400).json({ error: error.message });
-        }
+        const userGroups = await userGroupService.getAll();
+
+        return res.json(userGroups);
+
     }
 
+    async getUsersInsideGroup(req: Request, res: Response) {
+
+        const { id } = req.params;
+
+        const userGroupService = new UserGroupService();
+
+        const userGroup = await userGroupService.getUsersInsideGroup(Number(id));
+        
+        return res.json(userGroup);
+
+    }
+
+
     async update(req: Request, res: Response) {
-        try {
-            const { nome_grupo, descricao_grupo } = req.body;
-            const { id } = req.params;
 
-            const userGroupService = new UserGroupService();
+        const { nome_grupo, descricao_grupo } = req.body;
+        const { id } = req.params;
 
-            const userGroup = await userGroupService.update(
-                {
-                    nome_grupo,
-                    descricao_grupo,
-                },
-                Number(id)
-            );
+        const userGroupService = new UserGroupService();
 
-            return res.json(userGroup);
-        } catch (error: any) {
-            return res.status(400).json({ error: error.message });
-        }
+        const userGroup = await userGroupService.update(
+            {
+                nome_grupo,
+                descricao_grupo,
+            },
+            Number(id)
+        );
+
+        return res.json(userGroup);
     }
 
     async delete(req: Request, res: Response) {
-        try {
-            const { id } = req.params;
 
-            const userGroupService = new UserGroupService();
+        const { id } = req.params;
 
-            const userGroup = await userGroupService.delete(Number(id));
+        const userGroupService = new UserGroupService();
 
-            return res.json(userGroup);
-        } catch (error: any) {
-            return res.status(400).json({ error: error.message });
-        }
+        const userGroup = await userGroupService.delete(Number(id));
+
+        return res.json(userGroup);
+
     }
 }
 

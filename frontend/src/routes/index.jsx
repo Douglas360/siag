@@ -4,11 +4,11 @@ import {
     Routes,
     Route,
     //Navigate,
-    
+
 
 } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext/useAuth';
-import {CombinedProvider} from '../context/index'
+import { CombinedProvider } from '../context/index'
 
 
 
@@ -42,10 +42,10 @@ export const AppRouter = () => {
         return isAuthenticated ? children : <Login />
     }
 
-  /*  const Authenticated = ({ children }) => {
-        const token = localStorage.getItem('token') || null;
-        return token ? <Navigate to="/dashboards/basic" /> : children
-    }*/
+    /*  const Authenticated = ({ children }) => {
+          const token = localStorage.getItem('token') || null;
+          return token ? <Navigate to="/dashboards/basic" /> : children
+      }*/
 
 
 
@@ -54,23 +54,24 @@ export const AppRouter = () => {
 
         <Router>
             <CombinedProvider>
-                    <Suspense fallback={<AppLoader />}>
-                        <Routes>
-                            <Route path="/" exact element={<Login />} />
+                <Suspense fallback={<AppLoader />}>
+                    <Routes>
+                        <Route path="/" exact element={<Login />} />
 
-                            <Route path="/dashboards/basic" element={<Private><Dashboards/></Private>} />
-                            <Route path="administrative/*" element={<Administrative />} />
-                            <Route path="create/*" element={<Register />} />
-                            
-                            <Route path="widgets/*" element={<Widgets />} />
-                            <Route path="elements/*" element={<Elements />} />
-                            <Route path="components/*" element={<Components />} />
-                            <Route path="charts/*" element={<Charts />} />
-                            <Route path="forms/*" element={<Forms />} />
-                            <Route path="tables/*" element={<Tables />} />
-                        </Routes>
-                    </Suspense>
-               </CombinedProvider>
+                        <Route path="/dashboards/basic" element={<Private><Dashboards /></Private>} />
+                        <Route path="administrative/*" element={<Administrative />} />
+                        <Route path="create/*" element={<Register />} />
+                        <Route path="update/*" element={<Register />} />
+
+                        <Route path="widgets/*" element={<Widgets />} />
+                        <Route path="elements/*" element={<Elements />} />
+                        <Route path="components/*" element={<Components />} />
+                        <Route path="charts/*" element={<Charts />} />
+                        <Route path="forms/*" element={<Forms />} />
+                        <Route path="tables/*" element={<Tables />} />
+                    </Routes>
+                </Suspense>
+            </CombinedProvider>
         </Router>
 
     );

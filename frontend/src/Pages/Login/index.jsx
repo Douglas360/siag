@@ -29,7 +29,7 @@ const Login = () => {
         <div className="min-h-screen bg-white flex">
             {loading &&
                 <div className="fixed inset-0 flex items-center justify-center z-50">
-                   <Spinner style={{ width: '10rem', height: '10rem' }} color="primary" />
+                    <Spinner style={{ width: '10rem', height: '10rem' }} color="primary" />
                 </div>
             }
             <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
@@ -44,7 +44,7 @@ const Login = () => {
                                     Login
                                 </label>
                                 <div className="mt-1">
-                                    <input id="email" name="email" type="text" autoComplete="email" required
+                                    <input id="email" name="email" type="text" autoComplete="email" required autoFocus
                                         className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         value={login}
                                         onChange={(event) => setLogin(event.target.value)} />
@@ -87,7 +87,7 @@ const Login = () => {
                 </div>
             </div>
             <div className="hidden lg:block relative flex-1 mt-10">
-                <img 
+                <img
                     src={loginMainImage} alt="" />
             </div>
         </div>

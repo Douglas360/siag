@@ -77,8 +77,10 @@ class AuthUserService {
                     id: user.id
                 },
                 include: {
-                    empresa: true // include the linked Empresa record
+                    empresa: true, // include the linked Empresa record     
+                    cargo: true,
                 },
+
                 data: {
                     lastLogin: new Date()
                 }
@@ -143,6 +145,7 @@ class AuthUserService {
                 return acc;
             }, [] as { id: number; name: string; subroles: { id: number; name: string; }[] }[]);
 
+            const cargo = updatedUser.cargo?.nome_cargo ?? null
 
             return {
                 token,
@@ -150,7 +153,7 @@ class AuthUserService {
                 name: updatedUser.name,
                 login: updatedUser.login,
                 email: updatedUser.email,
-                cargo: updatedUser.cargo,
+                cargo: cargo,
                 admin: updatedUser.admin,
                 avatar: updatedUser.avatar,
                 empresa: {

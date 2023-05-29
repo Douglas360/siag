@@ -1,25 +1,14 @@
 import React, { Fragment } from 'react'
-import PageTitle from '../../../../Layout/AppMain/PageTitle'
+
 import Tabs from 'react-responsive-tabs'
-
-
-import CreateUser from './CreateUserJs'
-import ListUser from './ListUserJs'
-import UpdateUserStatusJs from './UpdateUserStatusJs'
+import UpdateUserJs from './form';
+import PageTitle from '../../../../../Layout/AppMain/PageTitle';
 
 const tabsContent = [
     {
-        title: 'Cadastrar Usuário',
-        content: <CreateUser />
+        title: 'Atualizar Usuário',
+        content: <UpdateUserJs />
     },
-    {
-        title: 'Listar Usuários',
-        content: <ListUser />
-    },
-    {
-        title: 'Atualizar Status',
-        content: <UpdateUserStatusJs />
-    }
 
 ];
 
@@ -31,12 +20,12 @@ function getTabs() {
     }));
 }
 
-const User = () => {
+const UpdateUser = () => {
     return (
         <Fragment>
             <PageTitle
                 heading="Usuário"
-                subheading="Cadastro de Usuário"
+                subheading="Atualização de Usuário"
                 icon="pe-7s-user icon-gradient bg-amy-crisp"
             />
             <Tabs tabsWrapperClass="body-tabs body-tabs-layout" transform={false} showInkBar={true} items={getTabs()} />
@@ -45,4 +34,4 @@ const User = () => {
     )
 }
 
-export default User
+export default UpdateUser

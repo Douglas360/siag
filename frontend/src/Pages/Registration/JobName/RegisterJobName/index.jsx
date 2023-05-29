@@ -1,26 +1,19 @@
 import React, { Fragment } from 'react'
 import PageTitle from '../../../../Layout/AppMain/PageTitle'
 import Tabs from 'react-responsive-tabs'
+import CreateJobNameJs from './Form';
+import ListJobNameJs from '../ListJobName';
 
-
-import CreateUser from './CreateUserJs'
-import ListUser from './ListUserJs'
-import UpdateUserStatusJs from './UpdateUserStatusJs'
 
 const tabsContent = [
     {
-        title: 'Cadastrar Usuário',
-        content: <CreateUser />
+        title: 'Cadastrar Cargo',
+        content: <CreateJobNameJs />
     },
     {
-        title: 'Listar Usuários',
-        content: <ListUser />
+        title: 'Listar Cargos',
+        content: <ListJobNameJs />
     },
-    {
-        title: 'Atualizar Status',
-        content: <UpdateUserStatusJs />
-    }
-
 ];
 
 function getTabs() {
@@ -31,13 +24,13 @@ function getTabs() {
     }));
 }
 
-const User = () => {
+const JobName = () => {
     return (
         <Fragment>
             <PageTitle
-                heading="Usuário"
-                subheading="Cadastro de Usuário"
-                icon="pe-7s-user icon-gradient bg-amy-crisp"
+                heading="Cargo"
+                subheading="Cadastro de Cargos"
+                icon="pe-7s-server icon-gradient bg-amy-crisp"
             />
             <Tabs tabsWrapperClass="body-tabs body-tabs-layout" transform={false} showInkBar={true} items={getTabs()} />
 
@@ -45,4 +38,4 @@ const User = () => {
     )
 }
 
-export default User
+export default JobName

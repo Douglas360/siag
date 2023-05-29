@@ -1,13 +1,15 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react'
-import { useAuth } from '../../../../../context/AuthContext/useAuth'
-import { useRegister } from '../../../../../context/RegisterContext/useRegister'
+import { useAuth } from '../../../../../context/AuthContext/useAuth';
+import { useRegister } from '../../../../../context/RegisterContext/useRegister';
+import TableView from '../../../../../components/Table/TableView';
+import { FormGroup, Input } from 'reactstrap';
 
-const TableView = lazy(() => import('../../../../../components/Table/TableView'));
 
-const ListUserJs = () => {
+const UpdateUserStatusJs = () => {
   const { user } = useAuth()
-  const { listUsers, deleteUser } = useRegister()
+  const { listUsers, updateUserStatus } = useRegister()
   const [userList, setUserList] = useState([])
+
   const data = {
     id_empresa: user.empresa?.id_empresa
   }
@@ -22,17 +24,19 @@ const ListUserJs = () => {
     loadUserList()
   }, [])
 
-  const handleEdit = (row) => {
-    //Navigate to the edit page
-    window.location.href = `/update/user/${row.id}`
+  const handleEdit = async (row) => {
+    const id = row.id
+    const status = {
+      ativo: !row.ativo
+    }
+
+    //console.log(status)
+
+    await updateUserStatus(id, status)
+    loadUserList()
 
   }
 
-  const handleDelete = async (id) => {
-
-    await deleteUser(id)
-    await loadUserList()
-  }
 
 
   const columns = ['ID', 'Foto', 'Nome', 'Login', 'Status', 'Ação']
@@ -72,6 +76,21 @@ const ListUserJs = () => {
         </>
 
       ),
+      acao: (
+        //icon switch to active or inactive user status 
+        <FormGroup switch className="d-flex justify-content-center align-items-center">
+          <Input
+            id='ativo'
+            name='ativo'
+            type='switch'
+            checked={user.ativo}
+            onChange={() => handleEdit(user)}
+
+          />
+        </FormGroup>
+
+      )
+
 
 
 
@@ -79,7 +98,7 @@ const ListUserJs = () => {
   })
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <TableView columns={columns} rows={rows} id="id" handleEdit={handleEdit} handleDelete={handleDelete} />
+      <TableView columns={columns} rows={rows} id="id" handleEdit={handleEdit} button1={'Editar'} />
     </Suspense>
 
 
@@ -87,4 +106,4 @@ const ListUserJs = () => {
   )
 }
 
-export default ListUserJs
+export default UpdateUserStatusJs

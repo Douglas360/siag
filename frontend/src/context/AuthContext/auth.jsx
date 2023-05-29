@@ -2,13 +2,7 @@ import { createContext, useEffect, useState } from 'react';
 import { api } from '../../services/api';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-
-const ERROR_MESSAGES = {
-    'User not found': 'Usuário não encontrado',
-    'Email/Password incorrect': 'E-mail ou senha incorretos',
-    'Company is not active': 'A empresa não está ativa',
-    'User is not active': 'Usuário não está ativo',
-};
+import { ERROR_MESSAGES } from '../../config/ErrorMessage';
 
 export const AuthContext = createContext();
 

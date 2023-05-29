@@ -3,8 +3,9 @@ import { Card, CardBody, Col, Form, Input, Label, Row, FormFeedback, Button, Spi
 import { useRegister } from '../../../../../../context/RegisterContext/useRegister';
 import { useAuth } from '../../../../../../context/AuthContext/useAuth';
 import imgAvatar from '../../../../../../assets/utils/images/avatars/avatar-blank.png';
+import { useParams } from 'react-router-dom';
 
-const FormCreateUserGroup = () => {
+const FormCreateUserGroup = ({ isUpdate }) => {
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [loginError, setLoginError] = useState(false);
@@ -15,14 +16,7 @@ const FormCreateUserGroup = () => {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [profileList, setProfileList] = useState([]);
   const [userGroupList, setUserGroupList] = useState([]);
-  const [cargoList, setCargoList] = useState([
-    { id: 1, name: "Administrador" },
-    { id: 2, name: "Usuário" },
-    { id: 3, name: "Gerente" },
-    { id: 4, name: "Diretor" },
-    { id: 5, name: "Presidente" },
-
-  ]);
+  const [cargoList, setCargoList] = useState([]);
 
   const [selectedCargo, setSelectedCargo] = useState('');
   const [selectedProfile, setSelectedProfile] = useState('');
@@ -30,13 +24,32 @@ const FormCreateUserGroup = () => {
 
 
 
-  const { createUser, checkLogin, listProfile, listUserGroup, loading, loadingUpdate } = useRegister();
+  const { createUser, checkLogin, listProfile, listUserGroup, listJobName, loading, loadingUpdate, listUserById,
+    updateUser, } = useRegister();
   const { user } = useAuth();
+  const { id } = useParams();
 
+  const [userUpdate, setUserUpdate] = useState({}); // Initialize with an empty object
+
+  useEffect(() => {
+    if (isUpdate && id) {
+      loadUserById();
+    }
+  }, []);
+
+  const loadUserById = async () => {
+    const user = await listUserById(id);
+    setUserUpdate(user);
+    setSelectedCargo(user.id_cargo);
+    setSelectedProfile(user.id_perfil);
+    setSelectedUserGroup(user.id_grupo);
+    setAvatarUrl(user.avatar);
+  };
 
   useEffect(() => {
     loadProfile();
     loadUserGroup();
+    loadJobName();
 
   }, []);
 
@@ -51,13 +64,18 @@ const FormCreateUserGroup = () => {
     setUserGroupList(userGroup);
   };
 
+  const loadJobName = async () => {
+    const jobName = await listJobName(user?.empresa?.id_empresa);
+    setCargoList(jobName);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = new FormData(event.target);
     const {
       nome,
       email,
-
+      ativo,
       password,
       login,
     } = Object.fromEntries(form.entries());
@@ -75,16 +93,22 @@ const FormCreateUserGroup = () => {
     formData.append('name', nome);
     formData.append('email', email);
     formData.append('password', password);
+    formData.append('ativo', ativo);
     formData.append('login', login);
-    formData.append('cargo', selectedCargo);
-    formData.append('id_perfil', new Number(selectedProfile));
-    formData.append('id_grupo', new Number(selectedUserGroup));
-    formData.append('id_empresa', new Number(user.empresa?.id_empresa));
-    formData.append('id_user', new Number(user.id));
+    formData.append('id_cargo', selectedCargo);
+    formData.append('id_perfil', Number(selectedProfile));
+    formData.append('id_grupo', Number(selectedUserGroup));
+    formData.append('id_empresa', Number(user.empresa?.id_empresa));
+    formData.append('id_user', Number(user.id));
     formData.append('file', avatar);
 
 
-    await createUser(formData);
+    //await createUser(formData);
+    if (isUpdate) {
+      await updateUser(formData, id);
+    } else {
+      await createUser(formData);
+    }
     setUploadProgress(0);
 
   };
@@ -145,7 +169,6 @@ const FormCreateUserGroup = () => {
       setPasswordError(false); // Set the error state to false if the validation passes
     }
   };
-
 
   const handleFileChange = (e) => {
     setAvatarUrl(null);
@@ -211,6 +234,7 @@ const FormCreateUserGroup = () => {
                     type="text"
                     name="nome"
                     placeholder="Nome do Usuário"
+                    defaultValue={userUpdate?.name}
                     onBlur={handleNameBlur}
                     invalid={nameError}
                     valid={!nameError}
@@ -226,6 +250,7 @@ const FormCreateUserGroup = () => {
                     type="email"
                     name="email"
                     placeholder="Email"
+                    defaultValue={userUpdate?.email}
                     onBlur={handleEmailBlur}
                     invalid={emailError}
                     valid={!emailError}
@@ -243,6 +268,7 @@ const FormCreateUserGroup = () => {
                     type="text"
                     name="login"
                     placeholder="Login"
+                    defaultValue={userUpdate?.login}
                     onBlur={handleLoginBlur}
                     invalid={loginError || loginExists}
                     valid={!loginError && !loginExists}
@@ -261,6 +287,7 @@ const FormCreateUserGroup = () => {
                     type="password"
                     name="password"
                     placeholder="Senha"
+                    defaultValue={userUpdate?.password}
                     onBlur={handlePasswordBlur}
                     invalid={passwordError}
                     valid={!passwordError}
@@ -277,7 +304,15 @@ const FormCreateUserGroup = () => {
                   </Row>
                   <Row>
                     <Col>
-                      <Input type="checkbox" name="ativo" defaultChecked={true} />
+
+                      <Input
+                        type="checkbox"
+                        name="ativo"
+                        placeholder="Ativo"
+                        checked={isUpdate ? userUpdate?.ativo : true}
+                        onChange={(e) => setUserUpdate({ ...userUpdate, ativo: e.target.checked })}
+                      />
+
                     </Col>
                   </Row>
                 </Col>
@@ -290,11 +325,17 @@ const FormCreateUserGroup = () => {
             <Col md={4}>
               <Label for="cargo">Cargo</Label>
 
-              <Input type="select" name="cargo" placeholder="Cargo" onChange={(e) => setSelectedCargo(e.target.value)}>
+              <Input
+                type="select"
+                name="cargo"
+                placeholder="Cargo"
+                value={selectedCargo || userUpdate.id_cargo} // Set the value based on selectedCargo or userUpdate.id_cargo
+                onChange={(e) => setSelectedCargo(e.target.value)}
+              >
                 <option value="">{''}</option> {/* Empty option */}
                 {cargoList.map((cargo) => (
-                  <option key={cargo.id} value={cargo.id}>
-                    {cargo.name}
+                  <option key={cargo.id_cargo} value={cargo.id_cargo}>
+                    {cargo.nome_cargo}
                   </option>
                 ))}
               </Input>
@@ -305,39 +346,47 @@ const FormCreateUserGroup = () => {
             </Col>
             <Col md={4}>
               <Label for="perfil">Perfil de Usuário</Label>
-              <Input type="select" name="grupo" placeholder="Grupo de Usuário"
+              <Input
+                type="select"
+                name="perfil"
+                placeholder="Perfil de Usuário"
+                value={selectedProfile || userUpdate.id_perfil} // Set the value based on selectedProfile or userUpdate.id_perfil
                 onChange={(e) => setSelectedProfile(e.target.value)}
-              > <option value="">{''}</option>
+              >
+                <option value="">{''}</option>
                 {profileList.map((profile) => (
                   <option key={profile.id_perfil} value={profile.id_perfil}>
                     {profile.nome_perfil}
                   </option>
                 ))}
-
               </Input>
             </Col>
             <Col md={4}>
               <Label for="grupo">Grupo de Usuário</Label>
-              <Input type="select" name="grupo" placeholder="Grupo de Usuário"
+              <Input
+                type="select"
+                name="grupo"
+                placeholder="Grupo de Usuário"
+                value={selectedUserGroup || userUpdate.id_grupo} // Set the value based on selectedUserGroup or userUpdate.id_grupo
                 onChange={(e) => setSelectedUserGroup(e.target.value)}
-              > <option value="">{''}</option>
+              >
+                <option value="">{''}</option>
                 {userGroupList.map((group) => (
                   <option key={group.id_grupo} value={group.id_grupo}>
                     {group.nome_grupo}
                   </option>
                 ))}
-
               </Input>
             </Col>
             <Col md={12}>
               <div className="text-center">
                 {nameError || emailError || loginError || passwordError || loading || loginExists ? (
                   <Button color="primary" className="mt-4" disabled>
-                    Criar Usuário
+                    {isUpdate ? 'Atualizar Usuário' : 'Criar Usuário'}
                   </Button>
                 ) : (
                   <Button color="primary" className="mt-4" outline type="submit">
-                    Criar Usuário
+                    {isUpdate ? 'Atualizar Usuário' : 'Criar Usuário'}
                   </Button>
                 )}
               </div>

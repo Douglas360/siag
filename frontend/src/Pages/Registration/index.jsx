@@ -11,6 +11,9 @@ const Company = lazy(() => import('./Company'));
 const UserProfile = lazy(() => import('./User/CreateProfile'));
 const GroupUser = lazy(() => import('./User/CreateGroupUser'));
 const User = lazy(() => import('./User/CreateUser'));
+const JobName = lazy(() => import('./JobName/RegisterJobName'));
+const UpdateUser = lazy(() => import('./User/CreateUser/UpdateUserJs'));
+
 
 
 const Registration = () => (
@@ -28,6 +31,10 @@ const Registration = () => (
                         <Route path="profile" element={<UserProfile />} />
                         <Route path="user-group" element={<GroupUser />} />
                         <Route path="user" element={<User />} />
+                        <Route path="job/name" element={<JobName />} />
+
+                        {/*Updates */}
+                        <Route path="user/:id" element={<UpdateUser />} />
 
                     </Routes>
 

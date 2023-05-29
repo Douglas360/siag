@@ -10,6 +10,7 @@ import { UserGroupController } from './controllers/Modules/Registration/UserGrou
 import { OfficialDocumentController } from './controllers/Modules/Administrative/OfficialDocumentController';
 
 import { upload } from './config/multer';
+import { JobNameController } from './controllers/Modules/Registration/JobName/JobNameController';
 
 
 const router = Router();
@@ -19,8 +20,12 @@ router.get('/health-check', new HealthCheck().healthCheck);
 
 //Routes User
 router.post('/create/user', upload.single('file'), new CreateUserController().handle);
+router.put('/update/user/:id', upload.single('file'), new CreateUserController().updateUser);
+router.put('/update/user/status/:id', new CreateUserController().updateUserStatus);
+router.post('/list/user/:id', new CreateUserController().listUserById);
 router.post('/check/login', new CreateUserController().checkLogin);
 router.post('/list/users', new CreateUserController().listUsers);
+router.delete('/delete/user/:id', new CreateUserController().deleteUser);
 router.post('/auth/user', new AuthUserController().handle);
 router.post('/send/email/confirmation', new SendEmailConfirmationController().handle);
 
@@ -56,6 +61,14 @@ router.post('/create/user/group', new UserGroupController().create);
 router.get('/list/user/group', new UserGroupController().list);
 router.put('/update/user/group/:id', new UserGroupController().update);
 router.delete('/delete/user/group/:id', new UserGroupController().delete);
+router.get('/list/users/inside/group/:id', new UserGroupController().getUsersInsideGroup);
+
+//Routes Registration/JobName
+router.post('/create/job/name', new JobNameController().create);
+router.get('/list/job/name/id_company/:id', new JobNameController().list);
+router.put('/update/job/name/:id', new JobNameController().update);
+router.delete('/delete/job/name/:id', new JobNameController().delete);
+
 
 
 
