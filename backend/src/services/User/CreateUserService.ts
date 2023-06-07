@@ -1,5 +1,11 @@
+import { uploadFile } from "../../config/multer";
 import prismaClient from "../../prisma";
 import { hash } from "bcryptjs";
+
+interface FileObject {
+  originalname: string;
+  buffer: Buffer;
+}
 
 interface IUserRequest {
   name: string;
@@ -7,12 +13,14 @@ interface IUserRequest {
   email: string;
   admin?: boolean;
   avatar?: string;
+  file?: FileObject;
   password: string;
   id_cargo?: number | null;
   id_empresa: number;
   id_perfil?: number;
   id_grupo?: number;
   id_user?: number;
+  folderName?: string;
 }
 
 interface IUpdateUserRequest {
@@ -26,6 +34,7 @@ interface IUpdateUserRequest {
   id_grupo?: number;
   id_empresa?: number;
   id?: number;
+  ativo?: boolean;
 }
 
 interface IUser {
@@ -51,7 +60,8 @@ class CreateUserService {
     id_perfil,
     id_cargo,
     id_grupo,
-    avatar,
+    file,
+    folderName,
     id_user,
   }: IUserRequest): Promise<IUser> {
     try {
@@ -94,15 +104,17 @@ class CreateUserService {
       // Hash the password
       const passwordHash = await hash(password, 8);
 
+      const fileUrl = await uploadFile(file, folderName);
+
       // Create the user
       const user = await prismaClient.user.create({
         data: {
           name,
           email,
-          avatar,
+          avatar: fileUrl as string,
           login,
           admin,
-          id_cargo,
+          id_cargo: id_cargo ? id_cargo : null,
           id_empresa,
           password: passwordHash,
         },
@@ -205,6 +217,7 @@ class CreateUserService {
 
   async updateUser(id: number, updatedData: IUpdateUserRequest, id_perfil: number, id_grupo: number): Promise<IUser> {
     try {
+
       const existingUser = await prismaClient.user.findUnique({
         where: { id },
       });
@@ -251,12 +264,30 @@ class CreateUserService {
         updatedData.password = await hash(pass, 8);
       }
 
+      // Update the user data with the updated data without id_perfil
+      const data = {
+        ativo: updatedData.ativo,
+        name: updatedData.name,
+        email: updatedData.email,
+        avatar: updatedData.avatar,
+        login: updatedData.login,
+        password: updatedData.password,
+        id_cargo: updatedData.id_cargo,
+        id_grupo: updatedData.id_grupo,
+        id_empresa: updatedData.id_empresa,
+
+
+      }
+
+
+
       const updatedUserData = await prismaClient.user.update({
         where: { id },
-        data: updatedData,
+        data: data,
       });
 
       // Update user profile mapping for the user updated above
+
       if (id_perfil) {
         const userProfile = await prismaClient.userProfile.findFirst({
           where: {
@@ -264,15 +295,30 @@ class CreateUserService {
           },
         });
 
+        //if exists, update
         if (userProfile) {
-          await prismaClient.userProfileMapping.updateMany({
+
+          const userUpdate = await prismaClient.userProfileMapping.updateMany({
             where: {
               id_usuario: id,
             },
             data: {
               id_perfil: userProfile.id_perfil,
             },
+
           });
+
+          //if not exists, create
+          if (userUpdate.count === 0) {
+            console.log(userUpdate)
+            await prismaClient.userProfileMapping.create({
+              data: {
+                id_perfil: id_perfil,
+                id_usuario: id,
+              },
+            });
+
+          }
         } else {
           throw new Error("User profile not found");
         }
@@ -280,14 +326,17 @@ class CreateUserService {
 
       // Update user group mapping for the user updated above
       if (id_grupo) {
+
         const userGroup = await prismaClient.groupUser.findFirst({
           where: {
             id_grupo: id_grupo,
           },
         });
 
+        //if exists, update
         if (userGroup) {
-          await prismaClient.userGroupMapping.updateMany({
+
+          const updateGroup = await prismaClient.userGroupMapping.updateMany({
             where: {
               id_usuario: id,
             },
@@ -295,6 +344,17 @@ class CreateUserService {
               id_grupo: userGroup.id_grupo,
             },
           });
+
+          //if not exists, create
+          if (updateGroup.count === 0) {
+            await prismaClient.userGroupMapping.create({
+              data: {
+                id_grupo: id_grupo,
+                id_usuario: id,
+              },
+            });
+          }
+
         } else {
           throw new Error("User group not found");
         }
@@ -342,15 +402,11 @@ class CreateUserService {
         },
       });
 
-      return { ...updatedUserData, password: undefined as any};
+      return { ...updatedUserData, password: undefined as any };
     } catch (error: any) {
       throw error;
     }
   }
-
-
-
-
 
   // List user by id
   async listUserById(id: number) {
@@ -386,7 +442,7 @@ class CreateUserService {
         login: user.login,
         email: user.email,
         ativo: user.ativo,
-        avatar: user.avatar,
+        file: user.avatar,
         password: user.password,
         id_empresa: user.id_empresa,
         id_cargo: user?.id_cargo || null,

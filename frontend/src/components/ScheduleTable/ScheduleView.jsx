@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo } from 'react';
-import { groupData, priorityData, resourcesData } from '../../../mocks/dataResources';
+
 import { Scheduler } from 'devextreme-react';
 import { Resource, View } from 'devextreme-react/scheduler';
 import { locale, loadMessages } from 'devextreme/localization';
 import ptBR from 'devextreme/localization/messages/pt.json';
-import { useEventsContext } from '../../../context/EventsContext';
+import { useEventsContext } from '../../context/EventsContext';
+import { groupData, priorityData, resourcesData } from '../../mocks/dataResources';
+
 
 export const ScheduleView = ({ scheduleView, height }) => {
 
@@ -65,6 +67,7 @@ export const ScheduleView = ({ scheduleView, height }) => {
             timeZone="America/Sao_Paulo"
             defaultCurrentView={scheduleView}
             showAllDayPanel={false}
+            adaptivityEnabled={true}
             firstDayOfWeek={1}
             startDayHour={8}
             endDayHour={18}
@@ -74,8 +77,6 @@ export const ScheduleView = ({ scheduleView, height }) => {
             onAppointmentUpdated={handleAppointmentUpdate}
             onAppointmentDeleted={handleAppointmentRemove}
             noDataText='Nenhum evento encontrado'
-
-
 
         >
             <Resource

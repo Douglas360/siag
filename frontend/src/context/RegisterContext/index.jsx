@@ -183,7 +183,7 @@ export const RegisterProvider = ({ children }) => {
 
     // function to update User by id in params
     const updateUser = async (data, id) => {
-
+       
         return handleRequest(api.put(`/update/user/${id}`, data)).then(
             (response) => {
                 toast.success('Usuário atualizado com sucesso!', {
@@ -196,7 +196,7 @@ export const RegisterProvider = ({ children }) => {
 
     // function to update User Status by id in params
     const updateUserStatus = async (id, status) => {
-        console.log(status)
+       
         return handleRequest(api.put(`/update/user/status/${id}`, status)).then(
             (response) => {
                 toast.success('Usuário atualizado com sucesso!', {

@@ -1,5 +1,7 @@
 export const ERROR_MESSAGES = {
     'User not found': 'Usuário não encontrado',
+    'User with this login already exists': 'Usuário com este login já existe',
+    'User with this email already exists': 'Usuário com este email já existe',
     'Error deleting user': 'Usuário não pode ser deletado, contém registros vinculados',
     'Email/Password incorrect': 'E-mail ou senha incorretos',
     'Company is not active': 'A empresa não está ativa',
@@ -19,8 +21,7 @@ export const ERROR_MESSAGES = {
     'Group id is required': 'Id do grupo é obrigatório',
     'User group does not exists': 'Grupo de usuário não existe',
     'User group deleted successfully': 'Grupo de usuário deletado com sucesso',
-    'User group already exists': 'Grupo de usuário já existe',
-    'User with this email already exists': 'Usuário com este email já existe',
+    'User group already exists': 'Grupo de usuário já existe',    
     'Document type not found': 'Modelo de documento não encontrado',
     'Description is required': 'Descrição é obrigatório',
     'Number document is required': 'Número do documento é obrigatório',

@@ -12,9 +12,6 @@ class OfficialDocumentController {
             throw new Error('File is empty');
         }
 
-
-
-
         const createOfficialDocumentService = new OfficialDocumentService();
         //const folderName = 'documentos_oficiais';
 

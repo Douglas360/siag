@@ -450,7 +450,7 @@ export default class AnalyticsDashboard1 extends Component {
                                 </Col>
                                 <Col md="12" lg="6">
                                     <Row>
-                                        <Col md="6">
+                                       { /*<Col md="6">
                                             <div className="card mb-3 bg-arielle-smile widget-chart text-white card-border">
                                                 <div className="icon-wrapper rounded-circle">
                                                     <div className="icon-wrapper-bg bg-white opacity-10"/>
@@ -467,8 +467,8 @@ export default class AnalyticsDashboard1 extends Component {
                                                     <span className="ps-1">54.9%</span>
                                                 </div>
                                             </div>
-                                        </Col>
-                                        <Col md="6">
+                                        </Col>*/}
+                                        <Col md="12">
                                             <div className="card mb-3 bg-midnight-bloom widget-chart text-white card-border">
                                                 <div className="icon-wrapper rounded">
                                                     <div className="icon-wrapper-bg bg-white opacity-10"/>

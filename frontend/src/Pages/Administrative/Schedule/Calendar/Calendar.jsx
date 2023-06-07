@@ -6,10 +6,7 @@ import {
   Card, CardBody,
   
 } from 'reactstrap';
-
-import { ScheduleView } from '../../../../DemoPages/Components/ScheduleTable/ScheduleView';
-
-
+import { ScheduleView } from '../../../../components/ScheduleTable/ScheduleView';
 
 const Calendar = () => {
 

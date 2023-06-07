@@ -17,7 +17,7 @@ const AppFooter = () => {
               </li>
               <li className="nav-item">
                 <a href="/" className="nav-link">
-                    CNPJ: {user.empresa.cnpj}                
+                  CNPJ: {user.empresa.cnpj}
 
                 </a>
               </li>
@@ -35,7 +35,7 @@ const AppFooter = () => {
                   <div className="badge bg-success me-1 ms-0">
                     <small>NEW</small>
                   </div>
-                 v1.04
+                  v1.05
                 </a>
               </li>
             </ul>

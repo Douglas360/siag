@@ -5,20 +5,24 @@ import { uploadFile } from "../../config/multer";
 class CreateUserController {
 
     async handle(req: Request, res: Response) {
+        const folderName = 'avatar';
         const { name, email, admin, password, login, id_empresa, id_cargo, id_perfil, id_grupo, id_user } = req.body;
-
+        const { file } = req;
         //verify if file is empty       
-        if (!req.file) {
+       /* if (!req.file) {
             throw new Error('File is empty');
-        }
+        }*/
 
+       
+        //verify if file is empty
+       
         const createUserService = new CreateUserService();
 
-        const folderName = 'avatar';
+       
 
-        const file = req.file;
+        //const file = req.file;
 
-        const fileUrl = await uploadFile(file, folderName);
+        //const fileUrl = await uploadFile(file, folderName);
 
         const user = await createUserService.execute({
             name,
@@ -31,7 +35,9 @@ class CreateUserController {
             id_perfil: Number(id_perfil),
             id_grupo: Number(id_grupo),
             id_user: Number(id_user),
-            avatar: fileUrl as string,
+            //avatar: fileUrl as string,
+            file,
+            folderName
 
         });
 
@@ -73,6 +79,7 @@ class CreateUserController {
             updatedAt: new Date(),
             id_cargo: Number(id_cargo),
             id_empresa: Number(id_empresa),
+            id_perfil: Number(id_perfil),
         };
 
         const updatedUser = await createUserService.updateUser(Number(req.params.id), updatedUserData, Number(id_perfil), Number(id_grupo));
@@ -83,7 +90,7 @@ class CreateUserController {
 
     async updateUserStatus(req: Request, res: Response) {
         const { ativo } = req.body;
-       
+
 
         const createUserService = new CreateUserService();
 

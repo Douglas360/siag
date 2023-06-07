@@ -16,7 +16,7 @@ const DeleteModal = ({ isOpen, toggleModal, handleConfirm }) => {
                         Cancelar
                     </Button>
                     <Button color="danger" outline onClick={handleConfirm}>
-                      Excluir
+                        Excluir
                     </Button>
                 </ModalFooter>
             </div>
