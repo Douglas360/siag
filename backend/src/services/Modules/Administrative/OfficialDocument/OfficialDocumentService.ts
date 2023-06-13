@@ -1,5 +1,5 @@
-import { uploadFile, deleteFile } from "../../../config/multer";
-import prismaClient from "../../../prisma";
+import { uploadFile, deleteFile } from "../../../../config/multer";
+import prismaClient from "../../../../prisma";
 
 interface FileObject {
     originalname: string;
@@ -188,10 +188,6 @@ class OfficialDocumentService {
             throw error;
         }
     }
-
-
-
-
 
     //READ OFFICIAL DOCUMENT AND UPDATE LEITURA TABLE
     async read(id: number, id_user: number): Promise<{ message: string }> {

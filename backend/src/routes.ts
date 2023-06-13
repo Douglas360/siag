@@ -4,13 +4,14 @@ import { CreateUserController } from './controllers/User/CreateUserController';
 import { AuthUserController } from './controllers/User/AuthUserController';
 import { SendEmailConfirmationController } from './controllers/User/SendEmailConfirmationController';
 import { CompanyController } from './controllers/Modules/Registration/Company/CompanyController';
-import { DocumentTypeController } from './controllers/Modules/Administrative/DocumentTypeController';
+import { DocumentTypeController } from './controllers/Modules/Administrative/DocumentType/DocumentTypeController';
 import { UserProfileController } from './controllers/Modules/Registration/UserProfile/UserProfileController';
 import { UserGroupController } from './controllers/Modules/Registration/UserGroup/UserGroupController';
-import { OfficialDocumentController } from './controllers/Modules/Administrative/OfficialDocumentController';
+import { OfficialDocumentController } from './controllers/Modules/Administrative/OfficialDocument/OfficialDocumentController';
 
 import { upload } from './config/multer';
 import { JobNameController } from './controllers/Modules/Registration/JobName/JobNameController';
+import { ScheduleController } from './controllers/Modules/Administrative/Schedule/ScheduleController';
 
 
 const router = Router();
@@ -32,6 +33,15 @@ router.post('/send/email/confirmation', new SendEmailConfirmationController().ha
 //Routes Company
 router.post('/create/company', new CompanyController().create);
 router.put('/update/company', new CompanyController().update);
+
+//Routes Administrative/Schedule
+router.post('/create/appointment', new ScheduleController().createAppointment);
+router.get('/list/appointments/:userId', new ScheduleController().getAppointments);
+router.delete('/delete/appointment/:id', new ScheduleController().deleteAppointment);
+router.put('/update/appointment/:id', new ScheduleController().updateAppointment);
+router.get('/list/user/group/mappings', new ScheduleController().getUserGroupMappings);
+router.get('/list/priorities', new ScheduleController().getPriorities);
+
 
 //Routes Administrative/DocumentType
 router.post('/create/document/type', upload.single('file'), new DocumentTypeController().create);

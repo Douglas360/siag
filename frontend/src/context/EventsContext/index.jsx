@@ -1,67 +1,76 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { CRUD, LocalStorage } from "../../core/methods";
+import { createContext, useContext } from "react";
 import { toast } from "react-toastify";
+import { api } from "../../services/api";
+import { ERROR_MESSAGES } from "../../config/ErrorMessage";
 
 const EventsContext = createContext();
 export const useEventsContext = () => useContext(EventsContext)
 
-const key = 'events'
-const local = LocalStorage()
-const crud = CRUD()
-
 export const EventsProvider = ({ children }) => {
-  const [events, setEvents] = useState([]);
 
-  const saveEventStorage = (event) => {
+  const handleRequest = async (requestPromise) => {
     try {
-      const newEvents = crud.add(events, event)
-      local.set(key, JSON.stringify(newEvents))
-      setEvents(newEvents)
-      toast.success(`Evento "${event.text}" criado!`)
+
+      const response = await requestPromise;
+      return response.data;
     } catch (error) {
-      console.error(error)
-      toast.error(`Erro ao salvar o evento "${event.text}"!`)
+      const message =
+        ERROR_MESSAGES[error.response?.data.eror] || 'Erro desconhecido';
+      toast.error(message, {
+        autoClose: 2000,
+        hideProgressBar: true,
+      });
+      throw error;
     }
+  };
+
+  const saveEvent = async (data) => {
+    return handleRequest(api.post(`/create/appointment`, data)).then((response) => {
+      toast.success(`Evento criado!`, { autoClose: 900, pauseOnHover: false })
+      return response
+    }).catch((error) => {
+      console.log(error)
+      toast.error(`Erro ao criar o evento!`, { autoClose: 900, pauseOnHover: false })
+      return error
+    });
   }
 
-  const updateEventStorage = (event) => {
-    try {
-      const newEvents = crud.update(event, events)
-      local.set(key, JSON.stringify(newEvents))
-      setEvents(newEvents)
-      toast.info(`Evento "${event.text}" atualizado!`)
-    } catch (error) {
-      console.error(error)
-      toast.error(`Erro ao atualizar o evento "${event.text}"!`)
-    }
+  const updateEvent = async (data) => {
+    return handleRequest(api.put(`/update/appointment/${data.id}?d_user=${data.ownerId}`, data)).then((response) => {
+      toast.info(`Evento atualizado!`, { autoClose: 900, pauseOnHover: false })
+      return response
+    }).catch((error) => {
+      console.log(error)
+      toast.error(`Erro ao atualizar o evento!`)
+      return error
+    });
   }
 
-  const removeEventStorage = (id) => {
-    try {
-      const newEvents = crud.remove(events, id)
-      local.set(key, JSON.stringify(newEvents))
-      setEvents(newEvents)
-      toast.success(`Evento removido!`)
-    } catch (error) {
-      console.error(error)
-      toast.error(`Erro ao remover o evento!`)
-    }
+  const removeEvent = async (id, id_user) => {
+    return handleRequest(
+      api.delete(`/delete/appointment/${id}?d_user=${id_user}`)).then((response) => {
+        toast.warning(`Evento deletado!`, { autoClose: 900, pauseOnHover: false })
+        return response
+      })
   }
 
-  useEffect(() => {
-    try {
-      const eventsStorage = local.get(key)
-      if (eventsStorage) {
-        setEvents(eventsStorage)
-      }
-    } catch (error) {
-      console.error(error)
-      toast.error(`Erro ao carregar os eventos salvos!`)
-    }
-  }, [])
+  const getEvents = async (id) => {
+    return handleRequest(api.get(`/list/appointments/${id}`));
+
+  }
+
+  const getPriority = async () => {
+    return handleRequest(api.get(`/list/priorities`));
+  }
 
   return (
-    <EventsContext.Provider value={{ events, setEvents, saveEventStorage, updateEventStorage, removeEventStorage }}>
+    <EventsContext.Provider value={{
+      saveEvent,
+      updateEvent,
+      getEvents,
+      removeEvent,
+      getPriority
+    }}>
       {children}
     </EventsContext.Provider>
   );

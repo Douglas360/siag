@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { OfficialDocumentService } from "../../../services/Modules/Administrative/OfficialDocumentService"
+import { OfficialDocumentService } from "../../../../services/Modules/Administrative/OfficialDocument/OfficialDocumentService"
 
 class OfficialDocumentController {
     //CREATE OFFICIAL DOCUMENT

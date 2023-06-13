@@ -8,8 +8,8 @@ import './input.css';
 import 'devextreme/dist/css/dx.light.css';
 
 function Main() {
-  
-   
+
+
     const { width } = useWindowSize();
     const colorScheme = useSelector(state => state.ThemeOptions.colorScheme);
     const enableFixedHeader = useSelector(state => state.ThemeOptions.enableFixedHeader);
@@ -17,8 +17,8 @@ function Main() {
     const enableFixedFooter = useSelector(state => state.ThemeOptions.enableFixedFooter);
     const enableFixedSidebar = useSelector(state => state.ThemeOptions.enableFixedSidebar);
     const enableClosedSidebar = useSelector(state => state.ThemeOptions.enableClosedSidebar);
- 
-    
+
+
     return (
         <Fragment>
             <div className={cx(
@@ -26,10 +26,10 @@ function Main() {
                 { 'fixed-header': enableFixedHeader },
                 { 'fixed-sidebar': enableFixedSidebar || width < 1250 },
                 { 'fixed-footer': enableFixedFooter },
-                { 'closed-sidebar': enableClosedSidebar || width < 1250 },                
+                { 'closed-sidebar': enableClosedSidebar || width < 1250 },
                 { 'sidebar-mobile-open': enableMobileMenu },
             )}>
-              
+
                 <AppRouter />
                 <ToastContainer />
             </div>

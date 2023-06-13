@@ -1,4 +1,4 @@
-import { uploadFile } from "../../config/multer";
+import { deleteFile, uploadFile } from "../../config/multer";
 import prismaClient from "../../prisma";
 import { hash } from "bcryptjs";
 
@@ -28,6 +28,7 @@ interface IUpdateUserRequest {
   login?: string;
   email?: string;
   avatar?: string;
+  file?: FileObject;
   password?: string;
   id_cargo?: number | null;
   id_perfil?: number;
@@ -104,7 +105,13 @@ class CreateUserService {
       // Hash the password
       const passwordHash = await hash(password, 8);
 
-      const fileUrl = await uploadFile(file, folderName);
+      //const fileUrl = await uploadFile(file, folderName);
+      let fileUrl: string | Error = 'http://siag.com.br.s3-website-us-east-1.amazonaws.com/avatar/ecfa504f416c2b2956b5787f37453301-avatar.png';
+
+      if (file && file.originalname !== 'avatar.png') {
+        fileUrl = await uploadFile(file, folderName);
+
+      }
 
       // Create the user
       const user = await prismaClient.user.create({
@@ -264,22 +271,48 @@ class CreateUserService {
         updatedData.password = await hash(pass, 8);
       }
 
-      // Update the user data with the updated data without id_perfil
+      let fileUrl: string | Error | undefined = 'http://siag.com.br.s3-website-us-east-1.amazonaws.com/avatar/ecfa504f416c2b2956b5787f37453301-avatar.png';
+
+
+      const verifyAvatar = await prismaClient.user.findFirst({
+        where: {
+
+          avatar: updatedData.avatar
+        }
+      });
+
+      if (!verifyAvatar) {
+        console.log("first")
+        if (updatedData?.file && updatedData.file.originalname !== 'avatar.png') {
+          const avatarUrl = updatedData.file.toString();
+
+          const avatarFile = avatarUrl.split("/")[4];
+
+          const avatarKey = `avatar/${avatarFile}`;
+
+          await deleteFile(avatarKey);
+
+          fileUrl = await uploadFile(updatedData.file, 'avatar');
+        }
+      } else {
+
+        fileUrl = updatedData.avatar
+
+      }
+
       const data = {
         ativo: updatedData.ativo,
         name: updatedData.name,
         email: updatedData.email,
-        avatar: updatedData.avatar,
+        avatar: fileUrl as string,
         login: updatedData.login,
         password: updatedData.password,
-        id_cargo: updatedData.id_cargo,
+        id_cargo: updatedData.id_cargo ? updatedData.id_cargo : null,
         id_grupo: updatedData.id_grupo,
         id_empresa: updatedData.id_empresa,
 
 
       }
-
-
 
       const updatedUserData = await prismaClient.user.update({
         where: { id },
@@ -310,7 +343,7 @@ class CreateUserService {
 
           //if not exists, create
           if (userUpdate.count === 0) {
-            console.log(userUpdate)
+
             await prismaClient.userProfileMapping.create({
               data: {
                 id_perfil: id_perfil,
@@ -487,6 +520,19 @@ class CreateUserService {
           id: id,
         },
       });
+
+      let fileUrl: string | Error = 'http://siag.com.br.s3-website-us-east-1.amazonaws.com/avatar/ecfa504f416c2b2956b5787f37453301-avatar.png';
+
+      //Delete avatar file for the user deleted above if exists in s3 bucket 
+      if (user.avatar !== fileUrl) {
+        //Delete avatar file for the user deleted above if exists in s3 bucket
+        //I need to concatenate the folder name with the file name to delete the file from s3 bucket
+        const avatarFile = user.avatar?.split("/")[4];
+        const avatarKey = `avatar/${avatarFile}`;
+
+        await deleteFile(avatarKey);
+
+      }
 
       /*  // Create Log for user deleted above
         await prismaClient.log.create({

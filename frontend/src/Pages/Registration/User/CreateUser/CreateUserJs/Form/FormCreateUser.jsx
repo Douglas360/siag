@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardBody, Col, Form, Input, Label, Row, FormFeedback, Button, Spinner, Progress } from 'reactstrap';
 import { useRegister } from '../../../../../../context/RegisterContext/useRegister';
 import { useAuth } from '../../../../../../context/AuthContext/useAuth';
-import imgAvatar from '../../../../../../assets/utils/images/avatars/avatar-blank.png';
+import imgAvatar from '../../../../../../assets/utils/images/avatars/avatarBlank.png';
 import { useParams } from 'react-router-dom';
 
 const FormCreateUserGroup = ({ isUpdate }) => {
@@ -13,7 +13,7 @@ const FormCreateUserGroup = ({ isUpdate }) => {
   const [passwordError, setPasswordError] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState();
   const [profileList, setProfileList] = useState([]);
   const [userGroupList, setUserGroupList] = useState([]);
   const [cargoList, setCargoList] = useState([]);
@@ -78,16 +78,29 @@ const FormCreateUserGroup = ({ isUpdate }) => {
       ativo,
       password,
       login,
+      avatarUrl
+
     } = Object.fromEntries(form.entries());
 
 
     let avatar = form.get('avatar');
 
-    if (avatar.size === 0) {
-      avatar = new File([imgAvatar], 'avatar.png', { type: 'image/png' });
+    if (!avatar) {
+
+      const response = await fetch(imgAvatar);
+      const blob = await response.blob();
+      avatar = new File([blob], 'avatar.png', { type: 'image/png' });
     }
 
-    form.append('file', avatar);
+    if (isUpdate && avatar.size === 0) {
+
+      form.append('avatarUrl', avatarUrl);
+    } else {
+      form.append('file', avatar);
+    }
+
+    //form.append('file', avatar);
+
 
     const formData = new FormData();
     formData.append('name', nome);
@@ -101,9 +114,10 @@ const FormCreateUserGroup = ({ isUpdate }) => {
     formData.append('id_empresa', Number(user.empresa?.id_empresa));
     formData.append('id_user', Number(user.id));
     formData.append('file', avatar);
+    formData.append('avatarUrl', avatarUrl);
+    //formData.append('avatarUrl', avatar);
 
 
-    //await createUser(formData);
     if (isUpdate) {
       await updateUser(formData, id);
     } else {
@@ -207,6 +221,7 @@ const FormCreateUserGroup = ({ isUpdate }) => {
                 <span className="absolute opacity-50 hover:opacity-100">
                   <i className="pe-7s-cloud-upload text-5xl"></i>
                 </span>
+
                 <Input
                   type="file"
                   name="avatar"
@@ -214,7 +229,38 @@ const FormCreateUserGroup = ({ isUpdate }) => {
                   onChange={handleFileChange}
                   hidden
                 />
-                {avatarUrl && <img src={avatarUrl} alt="avatar" className="w-full h-full rounded-full" />}
+                <Input type="text" name="avatarUrl" defaultValue={userUpdate?.file} hidden />
+                {isUpdate && !avatarUrl ? (
+                  <img
+                    className="w-40 h-40 rounded-full object-cover"
+                    src={userUpdate?.file}
+                    alt="avatar"
+                  />
+                ) :
+                  isUpdate && avatarUrl ? (
+                    <img
+                      className="w-40 h-40 rounded-full object-cover"
+                      src={avatarUrl}
+                      alt="avatar"
+                    />
+                  ) :
+                    !isUpdate &&
+                      avatarUrl ? (
+                      <img
+                        className="w-40 h-40 rounded-full object-cover"
+                        src={avatarUrl}
+                        alt="avatar"
+                      />
+                    )
+                      : (
+                        <img
+                          className="w-40 h-40 rounded-full object-cover"
+                          src={imgAvatar}
+                          alt="avatar"
+                        />
+                      )}
+
+
               </Label>
               {uploadProgress >= 0 && (
                 <div className="mt-1 w-3/4">

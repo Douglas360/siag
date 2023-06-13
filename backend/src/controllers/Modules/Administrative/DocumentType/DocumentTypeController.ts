@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { DocumentTypeService } from "../../../services/Modules/Administrative/DocumentTypeService"
+import { DocumentTypeService } from "../../../../services/Modules/Administrative/DocumentType/DocumentTypeService"
 
-import { uploadFile } from '../../../config/multer'
+import { uploadFile } from '../../../../config/multer'
 
 class DocumentTypeController {
     //CREATE DOCUMENT TYPE

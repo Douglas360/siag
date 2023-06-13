@@ -1,73 +1,181 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Scheduler } from 'devextreme-react';
+import { Button, Scheduler } from 'devextreme-react';
 import { Resource, View } from 'devextreme-react/scheduler';
 import { locale, loadMessages } from 'devextreme/localization';
 import ptBR from 'devextreme/localization/messages/pt.json';
 import { useEventsContext } from '../../context/EventsContext';
-import { groupData, priorityData, resourcesData } from '../../mocks/dataResources';
-
+import { useAuth } from '../../context/AuthContext/useAuth';
+import { toast } from 'react-toastify';
+import { useRegister } from '../../context/RegisterContext/useRegister';
 
 export const ScheduleView = ({ scheduleView, height }) => {
+    const { listUsers, listUserGroup, listUserInsideUserGroup } = useRegister();
+    const { saveEvent, updateEvent, getEvents, removeEvent, getPriority } = useEventsContext();
+    const { user } = useAuth();
+    const data = {
+        id_empresa: user.empresa?.id_empresa
+    }
 
-    const { saveEventStorage, updateEventStorage, removeEventStorage } =
-        useEventsContext();
+
+    const [events, setEvents] = useState([]); //
+    const [priority, setPriority] = useState([]); //
+    const [userList, setUserList] = useState([])
+    const [userGroup, setUserGroup] = useState([])
+
+
+    const getEventsData = async () => {
+        try {
+            //get events from api by user id in params
+            const response = await getEvents(user?.id);
+            setEvents(response);
+        } catch (error) {
+            toast.error(`Erro ao carregar os eventos salvos!`);
+        }
+    };
+
+    const getPriorityData = async () => {
+        try {
+            //get events from api by user id in params
+            const response = await getPriority();
+
+            setPriority(response);
+        } catch (error) {
+            toast.error(`Erro ao carregar os tipos de eventos!`);
+        }
+    };
+
+    const getUserList = async () => {
+        const response = await listUsers(data)
+        const userList = response.map((user) => {
+            return {
+                id: user.id,
+                text: user.name,
+
+            }
+        })
+        setUserList(userList)
+    };
+
+    const getUserGroup = async () => {
+        const response = await listUserGroup(data)
+        const userGroup = response.map((userGroup) => {
+            return {
+                id: userGroup.id_grupo,
+                text: userGroup.nome_grupo,
+
+            }
+        })
+        setUserGroup(userGroup)
+    };
 
     useEffect(() => {
+        getEventsData();
+        getPriorityData();
+        getUserList();
+        getUserGroup();
         loadMessages(ptBR);
         locale(navigator.language);
     }, []);
+    const handleAppointmentAdd = async (e) => {
 
-    const appointmentsData = useMemo(() => {
-        try {
-            return JSON.parse(localStorage.getItem('events')) || [];
-        } catch (error) {
-            console.error('Error parsing appointments data:', error);
-            return [];
-        }
-    }, []);
-
-    const handleAppointmentAdd = (e) => {
-        const { startDate, endDate, text, ownerId, priority, description } =
+        const { startDate, endDate, text, usersId, priorityId, groupId, description } =
             e.appointmentData;
-        const newEvent = {
-            id: Math.random().toString(36).substr(2, 9),
-            startDate,
-            endDate,
-            text,
-            ownerId,
-            priority,
-            description,
-        };
-        saveEventStorage(newEvent);
+
+        try {
+            let mergedUsersId = usersId;
+
+
+            if (groupId) {
+                const groupIdArray = Array.isArray(groupId) ? groupId : [groupId];
+                const promises = groupIdArray.map((id) => listUserInsideUserGroup(id));
+                const responses = await Promise.all(promises);
+                const usersIdFromGroup = responses.flatMap((response) => response.map((user) => user.id));
+
+                if (usersId) {
+                    mergedUsersId = [...usersId, ...usersIdFromGroup];
+                } else {
+                    mergedUsersId = usersIdFromGroup;
+                }
+            }
+
+            // Filter mergedUsersId to contain only unique values
+            const uniqueUsersId = Array.from(new Set(mergedUsersId));
+
+            const newEvent = {
+                startDate,
+                endDate,
+                text,
+                priorityId,
+                description,
+                userIds: uniqueUsersId,
+                ownerId: user?.id,
+                groupId,
+            };
+
+            saveEvent(newEvent);
+        } catch (error) {
+
+            toast.error('Erro ao obter os usuários do grupo.');
+        }
     };
 
-    const handleAppointmentUpdate = (e) => {
-        const { startDate, endDate, text, ownerId, priority, description } =
+    const handleAppointmentUpdate = async (e) => {
+        const { id, startDate, endDate, text, usersId, priorityId, groupId, description } =
             e.appointmentData;
-        const newEvent = {
-            startDate,
-            endDate,
-            text,
-            ownerId,
-            priority,
-            description,
-        };
-        updateEventStorage(newEvent);
+
+        try {
+            let mergedUsersId = usersId;
+
+
+            if (groupId) {
+                const groupIdArray = Array.isArray(groupId) ? groupId : [groupId];
+                const promises = groupIdArray.map((id) => listUserInsideUserGroup(id));
+                const responses = await Promise.all(promises);
+                const usersIdFromGroup = responses.flatMap((response) => response.map((user) => user.id));
+
+                if (usersId) {
+                    mergedUsersId = [...usersId, ...usersIdFromGroup];
+                } else {
+                    mergedUsersId = usersIdFromGroup;
+                }
+            }
+
+            // Filter mergedUsersId to contain only unique values
+            const uniqueUsersId = Array.from(new Set(mergedUsersId));
+
+            const newEvent = {
+                id,
+                startDate,
+                endDate,
+                text,
+                priorityId,
+                description,
+                userIds: uniqueUsersId,
+                ownerId: user?.id,
+                groupId,
+            };
+
+            updateEvent(newEvent);
+        } catch (error) {
+            console.error(error);
+            toast.error('Erro ao atualizar, tente novamente.');
+        }
     };
 
     const handleAppointmentRemove = (e) => {
+
         const { id } = e.appointmentData;
-        removeEventStorage(id);
+        removeEvent(id, user?.id);
     };
 
+
     return (
+
         <Scheduler
-            dataSource={appointmentsData}
+            dataSource={events}
             timeZone="America/Sao_Paulo"
             defaultCurrentView={scheduleView}
-            showAllDayPanel={false}
-            adaptivityEnabled={true}
             firstDayOfWeek={1}
             startDayHour={8}
             endDayHour={18}
@@ -79,33 +187,34 @@ export const ScheduleView = ({ scheduleView, height }) => {
             noDataText='Nenhum evento encontrado'
 
         >
+
             <Resource
-                dataSource={priorityData}
-                fieldExpr="priority"
+                dataSource={priority}
+                fieldExpr="priorityId"
                 label="Tipo"
                 useColorAsDefault={true}
             />
 
             <Resource
-                fieldExpr="ownerId"
+                fieldExpr="usersId"
                 allowMultiple={true}
-                dataSource={resourcesData}
-                label="Agendado Por"
-                useColorAsDefault={true}
+                dataSource={userList}
+                label="Usuarios"
+
             />
 
             <Resource
                 fieldExpr="groupId"
                 allowMultiple={true}
-                dataSource={groupData}
+                dataSource={userGroup}
                 label="Grupos"
-                useColorAsDefault={true}
-            />
 
+            />
             <View type="month" name="Mês" />
             <View type="day" name="Dia" />
             <View type="agenda" name="Próximos Eventos" />
         </Scheduler>
+
     );
 };
 

@@ -32,6 +32,8 @@ model User {
   empresa          Empresa              @relation(fields: [id_empresa], references: [id_empresa])
   cargo            JobName?             @relation(fields: [id_cargo], references: [id_cargo], onDelete: NoAction, onUpdate: NoAction)
   leitura          Leitura[]
+  appointment      Appointment[]        @relation("OwnerToAppointments") // Add this line
+  schedule         AppointmentUser[]    @relation("OwnerToSchedule") // Add this line
 
   @@map("t_user")
 }
@@ -177,6 +179,8 @@ model GroupUser {
   descricao_grupo  String?
   userGroupMapping UserGroupMapping[]
 
+  appointmentGroup AppointmentGroup[]
+
   @@map("t_grupo_usuario")
 }
 
@@ -199,4 +203,49 @@ model JobName {
   user       User[]
 
   @@map("t_cargo")
+}
+
+model Priority {
+  id           Int           @id @default(autoincrement())
+  text         String
+  color        String
+  appointments Appointment[]
+
+  @@map("t_prioridade")
+}
+
+model Appointment {
+  id          Int                @id @default(autoincrement())
+  startDate   DateTime
+  endDate     DateTime
+  text        String
+  description String?
+  ownerId     Int?
+  priorityId  Int?
+  owner       User?              @relation("OwnerToAppointments", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade) // OwnerToAppointments  
+  priority    Priority?          @relation(fields: [priorityId], references: [id])
+  users       AppointmentUser[]
+  groups      AppointmentGroup[]
+
+  @@map("t_agenda")
+}
+
+model AppointmentUser {
+  id             Int         @id @default(autoincrement())
+  id_appointment Int
+  id_user        Int
+  appointment    Appointment @relation(fields: [id_appointment], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user           User        @relation("OwnerToSchedule", fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction) // OwnerToSchedule
+
+  @@map("t_agenda_usuario")
+}
+
+model AppointmentGroup {
+  id             Int         @id @default(autoincrement())
+  id_appointment Int
+  id_group       Int
+  appointment    Appointment @relation(fields: [id_appointment], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  group          GroupUser   @relation(fields: [id_group], references: [id_grupo], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("t_agenda_grupo")
 }

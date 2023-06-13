@@ -21,7 +21,7 @@ export const ERROR_MESSAGES = {
     'Group id is required': 'Id do grupo é obrigatório',
     'User group does not exists': 'Grupo de usuário não existe',
     'User group deleted successfully': 'Grupo de usuário deletado com sucesso',
-    'User group already exists': 'Grupo de usuário já existe',    
+    'User group already exists': 'Grupo de usuário já existe',
     'Document type not found': 'Modelo de documento não encontrado',
     'Description is required': 'Descrição é obrigatório',
     'Number document is required': 'Número do documento é obrigatório',
@@ -37,6 +37,12 @@ export const ERROR_MESSAGES = {
     'Job name already exists': 'Nome do cargo já existe, favor verificar',
     'Company id is required': 'Empresa é obrigatório',
     'Job name is being used': 'Nome do cargo está sendo usado',
+    'Invalid start and end dates': 'Data de início e fim inválidas',
+    'Appointment text is required': 'Texto do compromisso é obrigatório',
+    'One or more user IDs are invalid': 'Um ou mais IDs de usuário são inválidos',
+    'Appointment not found': 'Compromisso não encontrado',
+    'Only the owner can delete the appointment': 'Apenas o dono pode deletar o compromisso',
+    'Only the owner can update the appointment': 'Apenas o dono pode atualizar o compromisso',
 
 
 }

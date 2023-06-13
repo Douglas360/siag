@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { CreateUserService } from "../../services/User/CreateUserService";
-import { uploadFile } from "../../config/multer";
 
 class CreateUserController {
 
@@ -8,21 +7,8 @@ class CreateUserController {
         const folderName = 'avatar';
         const { name, email, admin, password, login, id_empresa, id_cargo, id_perfil, id_grupo, id_user } = req.body;
         const { file } = req;
-        //verify if file is empty       
-       /* if (!req.file) {
-            throw new Error('File is empty');
-        }*/
 
-       
-        //verify if file is empty
-       
         const createUserService = new CreateUserService();
-
-       
-
-        //const file = req.file;
-
-        //const fileUrl = await uploadFile(file, folderName);
 
         const user = await createUserService.execute({
             name,
@@ -35,7 +21,6 @@ class CreateUserController {
             id_perfil: Number(id_perfil),
             id_grupo: Number(id_grupo),
             id_user: Number(id_user),
-            //avatar: fileUrl as string,
             file,
             folderName
 
@@ -65,9 +50,10 @@ class CreateUserController {
     }
 
     async updateUser(req: Request, res: Response) {
-        const { name, email, password, login, id_empresa, id_cargo, id_grupo, id_perfil, ativo } = req.body;
+        const { name, email, password, login, id_empresa, id_cargo, id_grupo, id_perfil, ativo, avatarUrl } = req.body;
+        const { file } = req;
         const status = ativo === 'on' ? true : false;
-
+        console.log(avatarUrl)
         const createUserService = new CreateUserService();
 
         const updatedUserData = {
@@ -80,6 +66,8 @@ class CreateUserController {
             id_cargo: Number(id_cargo),
             id_empresa: Number(id_empresa),
             id_perfil: Number(id_perfil),
+            file,
+            avatar: avatarUrl
         };
 
         const updatedUser = await createUserService.updateUser(Number(req.params.id), updatedUserData, Number(id_perfil), Number(id_grupo));

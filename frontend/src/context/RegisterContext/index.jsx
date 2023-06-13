@@ -127,12 +127,13 @@ export const RegisterProvider = ({ children }) => {
 
     //function to list User inside a User Group by id in params
     const listUserInsideUserGroup = async (id) => {
+       
         return handleRequest(api.get(`/list/users/inside/group/${id}`));
     };
 
     // function to update User Group by id in params
     const updateUserGroup = async (data) => {
-        console.log(data)
+    
         return handleRequest(
             api.put(`/update/user/group/${data.id}`, data)
         ).then((response) => {

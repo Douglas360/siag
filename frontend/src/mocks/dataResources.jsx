@@ -8,6 +8,7 @@ export const priorityData = [
     { id: 5, text: 'Tarefa', color: '#5936f4' },
 ]
 
+//Users
 export const resourcesData = [
   {
     text: 'Samantha Bright',
@@ -28,6 +29,7 @@ export const resourcesData = [
   },
 ];
 
+//Group Users Mapping
 export const groupData = [
   {
     text: 'Administrativo',
